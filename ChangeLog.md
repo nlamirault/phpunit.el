@@ -1,7 +1,6 @@
-Fabric.el ChangeLog
-===================
+# phpunit.el ChangeLog
 
-# Version 0.1.0 (2014-04-02)
+# Version 0.1.0 (IN PROGRESS)
 
-- Launch Fabric task in a specific buffer
-- Display Fabric help
+- Launch current class tests
+- Launch all tests from current projects
