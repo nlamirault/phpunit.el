@@ -6,7 +6,11 @@ Manage the [PHPUnit](http://phpunit.de) tests from Emacs.
 
 The recommended way to install ``phpunit.el`` is via [MELPA](http://melpa.milkbox.net/):
 
-M-x package-install phpunit.el
+    M-x package-install phpunit.el
+
+or [Cask](https://github.com/cask/cask):
+
+	(depends-on "phpunit.el")
 
 
 ## Usage
