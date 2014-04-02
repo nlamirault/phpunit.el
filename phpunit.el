@@ -70,7 +70,7 @@
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
     ;;(f-filename (replace-regexp-in-string "\\(tests/\\|\\(Test\\)?\.php$\\)" "" file))))
-    (f-filename (replace-regexp-in-string "\.php$" "" file))))
+    (f-filename (replace-regexp-in-string "\\.php\\'" "" file))))
 
 ;; API
 ;; -----
