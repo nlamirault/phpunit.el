@@ -40,11 +40,19 @@
 (require 's)
 (require 'f)
 
-(defvar phpunit-program "phpunit"
-  "PHPUnit binary path.")
+(defgroup phpunit nil
+  "PHPUnit utility"
+  :group 'php)
 
-(defvar phpunit-arg ""
-  "Argument to pass to phpunit.")
+(defcustom phpunit-program "phpunit"
+  "PHPUnit binary path."
+  :type 'file
+  :group 'phpunit)
+
+(defcustom phpunit-arg ""
+  "Argument to pass to phpunit."
+  :type 'string
+  :group 'phpunit)
 
 ;; Commands
 ;; -----------
