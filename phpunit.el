@@ -66,7 +66,7 @@
                      "./")))
 
 
-(defun get-current-class (&optional file)
+(defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
     ;;(f-filename (replace-regexp-in-string "\\(tests/\\|\\(Test\\)?\.php$\\)" "" file))))
@@ -79,14 +79,14 @@
 ;;;###autoload
 ;; (defun phpunit-current-test ()
 ;;   (let ((args (s-concat " --filter '"
-;; 			(get-current-class) "::" (get-current-test) "'")))
+;; 			(phpunit-get-current-class) "::" (phpunit-get-current-test) "'")))
 ;;     (compile (phpunit-get-program args))))
 
 
 ;;;###autoload
 (defun phpunit-current-class ()
   (interactive)
-  (let ((args (s-concat " --filter '" (get-current-class) "'")))
+  (let ((args (s-concat " --filter '" (phpunit-get-current-class) "'")))
     (compile (phpunit-get-program args))))
 
 
