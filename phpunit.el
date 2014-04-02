@@ -37,12 +37,22 @@
 
 ;;; Code:
 
+(require 's)
+(require 'f)
 
-(defvar phpunit-program "phpunit"
-  "PHPUnit binary path.")
+(defgroup phpunit nil
+  "PHPUnit utility"
+  :group 'php)
 
-(defvar phpunit-arg ""
-  "Argument to pass to phpunit.")
+(defcustom phpunit-program "phpunit"
+  "PHPUnit binary path."
+  :type 'file
+  :group 'phpunit)
+
+(defcustom phpunit-arg ""
+  "Argument to pass to phpunit."
+  :type 'string
+  :group 'phpunit)
 
 ;; Commands
 ;; -----------
@@ -64,11 +74,11 @@
                      "./")))
 
 
-(defun get-current-class (&optional file)
+(defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
     ;;(f-filename (replace-regexp-in-string "\\(tests/\\|\\(Test\\)?\.php$\\)" "" file))))
-    (f-filename (replace-regexp-in-string "\.php$" "" file))))
+    (f-filename (replace-regexp-in-string "\\.php\\'" "" file))))
 
 ;; API
 ;; -----
@@ -77,14 +87,14 @@
 ;;;###autoload
 ;; (defun phpunit-current-test ()
 ;;   (let ((args (s-concat " --filter '"
-;; 			(get-current-class) "::" (get-current-test) "'")))
+;; 			(phpunit-get-current-class) "::" (phpunit-get-current-test) "'")))
 ;;     (compile (phpunit-get-program args))))
 
 
 ;;;###autoload
 (defun phpunit-current-class ()
   (interactive)
-  (let ((args (s-concat " --filter '" (get-current-class) "'")))
+  (let ((args (s-concat " --filter '" (phpunit-get-current-class) "'")))
     (compile (phpunit-get-program args))))
 
 
