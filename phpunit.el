@@ -37,6 +37,8 @@
 
 ;;; Code:
 
+(require 's)
+(require 'f)
 
 (defvar phpunit-program "phpunit"
   "PHPUnit binary path.")
