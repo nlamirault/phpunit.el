@@ -7,13 +7,7 @@
 
 (source "melpa" "http://melpa.milkbox.net/packages/")
 
-(package "phpunit.el" "0.1.0" "Launch unit tests in Emacs using PHPUnit.")
-
-;; Basic libraries
-(depends-on "f")
-
-;; Utilities
-(depends-on "pkg-info")
+(package "phpunit.el")
 
 ;; Unit tests
 (development
