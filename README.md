@@ -47,6 +47,12 @@ Launch unit tests :
     $ make clean test
 
 
+## Support / Contribute
+
+See [here](CONTRIBUTING.md)
+
+
+
 ## Changelog
 
 A changelog is available [here](ChangeLog.md).
