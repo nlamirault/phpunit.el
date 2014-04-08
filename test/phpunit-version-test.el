@@ -2,8 +2,6 @@
 
 ;; Copyright (C) Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
-;; Author   : Nicolas Lamirault <nicolas.lamirault@gmail.com>
-
 ;;; Commentary:
 
 ;; Unit tests for version information
@@ -44,4 +42,4 @@
 
 
 (provide 'phpunit-version-test)
-;;; version-test.el ends here
+;;; phpunit-version-test.el ends here

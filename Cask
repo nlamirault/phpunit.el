@@ -1,16 +1,16 @@
-;;; phpunit.el Cask file
-
-;; Copyright (C) Nicolas Lamirault <nicolas.lamirault@gmail.com>
-
-;; Author   : Nicolas Lamirault <nicolas.lamirault@gmail.com>
-;; URL      : https://github.com/nlamirault/phpunit.el
+;;; Scame Cask file
 
 (source "melpa" "http://melpa.milkbox.net/packages/")
+(source "gnu" "http://elpa.gnu.org/packages/")
+(source "marmalade" "http://marmalade-repo.org/packages/")
 
-(package "phpunit.el")
+(package-file "phpunit.el")
 
-;; Unit tests
+(depends-on "f")
+(depends-on "s")
+
+;; Development
 (development
- (depends-on "cl-lib")
+ (depends-on "pkg-info")
  (depends-on "ert")
  (depends-on "ert-runner"))

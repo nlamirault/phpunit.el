@@ -31,8 +31,8 @@
 ;; To use this code, bind the functions `phpunit-current-test', `phpunit-current-class'
 ;; and `phpunit-current-project' to convenient keys with something like :
 
-;; (define-key web-mode-map (kbd "C-c c") 'phpunit-current-class)
-;; (define-key web-mode-map (kbd "C-c p") 'phpunit-current-project)
+;; (define-key web-mode-map (kbd "C-x c") 'phpunit-current-class)
+;; (define-key web-mode-map (kbd "C-x p") 'phpunit-current-project)
 
 ;;; Code:
 
@@ -53,31 +53,68 @@
   :type 'string
   :group 'phpunit)
 
+(defcustom phpunit-stop-on-error nil
+  "Stop execution upon first error."
+  :type 'boolean
+  :group 'phpunit)
+
+(defcustom phpunit-stop-on-failure nil
+  "Stop execution upon first error or failure."
+  :type 'boolean
+  :group 'phpunit)
+
+(defcustom phpunit-stop-on-skipped nil
+  "Stop execution upon first skipped test."
+  :type 'boolean
+  :group 'phpunit)
+
+(defcustom phpunit-verbose-mode nil
+  "Display debugging information during test execution."
+  :type 'boolean
+  :group 'phpunit)
+
+
 ;; Commands
 ;; -----------
 
 
-(defun phpunit-get-program (test)
+(defun phpunit-get-program (args)
   "Return the command to launch unit test.
-`TEST' corresponds to a classname, or a testname."
-  (concat phpunit-program " -c "
-	  (phpunit-get-root-directory)
-	  "phpunit.xml"
-	  test))
+`ARGS' corresponds to phpunit command line arguments."
+  (s-concat phpunit-program " -c "
+	    (phpunit-get-root-directory)
+	    "phpunit.xml"
+	    args))
 
 
 (defun phpunit-get-root-directory()
   "Return the root directory to run tests."
-  (file-truename (or (locate-dominating-file
-                      (buffer-file-name) "phpunit.xml")
-                     "./")))
-
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (file-truename (or (locate-dominating-file filename "phpunit.xml")
+			 "./")))))
 
 (defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
-    ;;(f-filename (replace-regexp-in-string "\\(tests/\\|\\(Test\\)?\.php$\\)" "" file))))
     (f-filename (replace-regexp-in-string "\\.php\\'" "" file))))
+
+(defun phpunit-arguments (args)
+  (let ((opts args))
+     (when phpunit-stop-on-error
+       (setq opts (s-concat opts " --stop-on-error")))
+     (when phpunit-stop-on-failure
+       (setq opts (s-concat opts " --stop-on-failure")))
+     (when phpunit-stop-on-skipped
+       (setq opts (s-concat opts " --stop-on-skipped")))
+     (when phpunit-verbose-mode
+       (setq opts (s-concat opts " --verbose")))
+     opts))
+
+
+(defun phpunit-run (args)
+  (compile (phpunit-get-program (phpunit-arguments args))))
+
 
 ;; API
 ;; -----
@@ -94,14 +131,14 @@
 (defun phpunit-current-class ()
   (interactive)
   (let ((args (s-concat " --filter '" (phpunit-get-current-class) "'")))
-    (compile (phpunit-get-program args))))
+    (phpunit-run args)))
 
 
 ;;;###autoload
 (defun phpunit-current-project ()
   "Launch phphunit for current project."
   (interactive)
-  (compile (phpunit-get-program "")))
+  (phpunit-run ""))
 
 
 (provide 'phpunit)
