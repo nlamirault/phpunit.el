@@ -34,8 +34,8 @@
   (let* ((cask-version (car (process-lines "cask" "version")))
 	 ;;(lib-version (phpunit-mode-library-version)))
 	 )
-    ;;(message "CS mode : %s" lib-version)
-    (message "CS Cask version: %s" cask-version)
+    ;;(message "PHPUnit.el : %s" lib-version)
+    (message "PHPUnit.el Cask version: %s" cask-version)
     ;;(should (string= version (phpunit-mode-library-version)))))
     (should (string= "0.1.0" cask-version))))
 
