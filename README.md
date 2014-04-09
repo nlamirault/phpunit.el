@@ -17,7 +17,7 @@ or [Cask](https://github.com/cask/cask):
 
 ### Available commands
 
-2 functions are available :
+These functions are available :
 * `phpunit-current-test`: launch unit tests for the current test in a class
 * `phpunit-current-class`: launch unit tests for the current class
 * `phpunit-current-project`: launch all unit tests
