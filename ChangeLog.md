@@ -5,7 +5,7 @@
 
 - Launch PHPUnit on current test
 - Add optional arguments to PHPUnit
-- Use `defcustom` instead of `defvar` for customizable variables (Thanks to [Syohex](https://github.com/syohex)
+- Use `defcustom` instead of `defvar` for customizable variables (Thanks to [Syohex](https://github.com/syohex))
 
 
 # Version 0.1.0 (04/04/2014)
