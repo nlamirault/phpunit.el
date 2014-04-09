@@ -34,8 +34,6 @@
   (apply 's-concat "phpunit -c " "phpunit.xml" arg))
 
 
-
-
 (ert-deftest test-phpunit-get-current-class ()
   (should (string= "PhpUnitTest"
 		   (phpunit-get-current-class "/tmp/foo/PhpUnitTest.php"))))

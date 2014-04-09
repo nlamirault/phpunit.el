@@ -31,6 +31,7 @@
 ;; To use this code, bind the functions `phpunit-current-test', `phpunit-current-class'
 ;; and `phpunit-current-project' to convenient keys with something like :
 
+;; (define-key web-mode-map (kbd "C-x t") 'phpunit-current-test)
 ;; (define-key web-mode-map (kbd "C-x c") 'phpunit-current-class)
 ;; (define-key web-mode-map (kbd "C-x p") 'phpunit-current-project)
 
@@ -42,6 +43,8 @@
 (defgroup phpunit nil
   "PHPUnit utility"
   :group 'php)
+
+
 
 (defcustom phpunit-program "phpunit"
   "PHPUnit binary path."
@@ -74,6 +77,11 @@
   :group 'phpunit)
 
 
+(defconst php-beginning-of-defun-regexp
+  "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
+  "Regular expression for a PHP function.")
+
+
 ;; Commands
 ;; -----------
 
@@ -99,6 +107,12 @@
   (let* ((file (or file (buffer-file-name))))
     (f-filename (replace-regexp-in-string "\\.php\\'" "" file))))
 
+
+(defun phpunit-get-current-test ()
+  (save-excursion
+    (when (re-search-backward php-beginning-of-defun-regexp nil t)
+      (match-string-no-properties 1))))
+
 (defun phpunit-arguments (args)
   (let ((opts args))
      (when phpunit-stop-on-error
@@ -117,18 +131,23 @@
 
 
 ;; API
-;; -----
+;; ----
 
 
 ;;;###autoload
-;; (defun phpunit-current-test ()
-;;   (let ((args (s-concat " --filter '"
-;; 			(phpunit-get-current-class) "::" (phpunit-get-current-test) "'")))
-;;     (compile (phpunit-get-program args))))
+(defun phpunit-current-test ()
+  "Launch PHPUnit on curent test."
+  (interactive)
+  (let ((args (s-concat " --filter '"
+			(phpunit-get-current-class)
+			"::"
+			(phpunit-get-current-test) "'")))
+    (phpunit-run args)))
 
 
 ;;;###autoload
 (defun phpunit-current-class ()
+  "Launch PHPUnit on current class."
   (interactive)
   (let ((args (s-concat " --filter '" (phpunit-get-current-class) "'")))
     (phpunit-run args)))
@@ -136,7 +155,7 @@
 
 ;;;###autoload
 (defun phpunit-current-project ()
-  "Launch phphunit for current project."
+  "Launch PHPUnit on current project."
   (interactive)
   (phpunit-run ""))
 

@@ -1,8 +1,9 @@
 # phpunit.el ChangeLog
 
 
-# Version 0.2.0 (IN PROGRESS)
+# Version 0.2.0 (09/04/2014)
 
+- Launch PHPUnit on current test
 - Add optional arguments to PHPUnit
 - Use `defcustom` instead of `defvar` for customizable variables (Thanks to [Syohex](https://github.com/syohex)
 
