@@ -2,10 +2,6 @@
 
 Manage the [PHPUnit](http://phpunit.de) tests from Emacs.
 
-## Deprecated
-
-See [Cerbere](https://github.com/nlamirault/cerbere)
-
 ## Installation
 
 The recommended way to install ``phpunit.el`` is via [MELPA](http://melpa.milkbox.net/):
