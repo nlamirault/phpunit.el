@@ -6,9 +6,6 @@
 
 (package-file "phpunit.el")
 
-(depends-on "f")
-(depends-on "s")
-
 ;; Development
 (development
  (depends-on "pkg-info")
