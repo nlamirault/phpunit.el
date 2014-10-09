@@ -1,14 +1,17 @@
 # phpunit.el
 
-Manage the [PHPUnit](http://phpunit.de) tests from Emacs.
+[![License GPL 3][badge-license]][LICENSE]
+[![travis][badge-travis]][travis]
+
+Manage the [PHPUnit][] tests from Emacs.
 
 ## Installation
 
-The recommended way to install ``phpunit.el`` is via [MELPA](http://melpa.milkbox.net/):
+The recommended way to install ``phpunit.el`` is via [MELPA][]:
 
     M-x package-install phpunit.el
 
-or [Cask](https://github.com/cask/cask):
+or [Cask][]:
 
 	(depends-on "phpunit.el")
 
@@ -68,3 +71,14 @@ See [LICENSE](LICENSE).
 ## Contact
 
 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+
+
+[badge-license]: https://img.shields.io/badge/license-GPL_2-green.svg?style=flat
+[LICENSE]: https://github.com/nlamirault/phpunit.el/blob/master/LICENSE
+[travis]: https://travis-ci.org/nlamirault/phpunit.el
+[badge-travis]: http://img.shields.io/travis/nlamirault/phpunit.el.svg?style=flat
+[GNU Emacs]: https://www.gnu.org/software/emacs/
+[MELPA]: http://melpa.milkbox.net/
+[Cask]: http://cask.github.io/
+[Issue tracker]: https://github.com/nlamirault/phpunit.el/issues
+[PHPUnit]: http://phpunit.de
