@@ -2,6 +2,9 @@
 
 [![License GPL 3][badge-license]][LICENSE]
 [![travis][badge-travis]][travis]
+[![Melpa Status](http://melpa.milkbox.net/packages/phpunit-badge.svg)](http://melpa.milkbox.net/#/phpunit)
+[![MELPA Stable](http://stable.melpa.org/packages/phpunit-badge.svg)](http://stable.melpa.org/#/phpunit)
+
 
 Manage the [PHPUnit][] tests from Emacs.
 
