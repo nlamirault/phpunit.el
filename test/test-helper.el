@@ -26,11 +26,14 @@
 
 ;;; Code:
 
+(require 'ansi)
 (require 'f)
+
 
 (setq debugger-batch-max-lines (+ 50 max-lisp-eval-depth)
       debug-on-error t)
 
+(defvar username (getenv "HOME"))
 
 (defconst phpunit-testsuite-dir (f-parent (f-this-file))
   "The testsuite directory.")
@@ -39,11 +42,28 @@
   (f-parent phpunit-testsuite-dir)
   "The Phpunit.el source directory.")
 
-(message "Running tests on Emacs %s" emacs-version)
+;; (message "Running tests on Emacs %s" emacs-version)
 
-(message "Load Phpunit : %s" phpunit-source-dir)
-(load (s-concat phpunit-source-dir "/phpunit.elc"))
+;; (message "Load Phpunit : %s" phpunit-source-dir)
+;; (load (s-concat phpunit-source-dir "/phpunit.elc"))
 
+(defconst phpunit-sandbox-path
+  (f-expand "sandbox" phpunit-testsuite-dir)
+  "The sandbox path for phpunit.")
+
+(defun cleanup-load-path ()
+  "Remove home directory from 'load-path."
+  (message (ansi-green "[phpunit] Cleanup path"))
+  (mapc #'(lambda (path)
+            (when (string-match (s-concat username "/.emacs.d") path)
+              (message (ansi-yellow "Suppression path %s" path))
+              (setq load-path (delete path load-path))))
+        load-path))
+
+(defun load-unit-tests (path)
+  "Load all unit test from PATH."
+  (dolist (test-file (or argv (directory-files path t "-test.el$")))
+    (load test-file nil t)))
 
 
 (provide 'test-helper)
