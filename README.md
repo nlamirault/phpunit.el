@@ -81,7 +81,7 @@ Nicolas Lamirault <nicolas.lamirault@gmail.com>
 [LICENSE]: https://github.com/nlamirault/phpunit.el/blob/master/LICENSE
 [travis]: https://travis-ci.org/nlamirault/phpunit.el
 [badge-travis]: http://img.shields.io/travis/nlamirault/phpunit.el.svg?style=flat
-s[badge-drone]: https://drone.io/github.com/nlamirault/phpunit.el/status.png
+[badge-drone]: https://drone.io/github.com/nlamirault/phpunit.el/status.png
 [drone]: https://drone.io/github.com/nlamirault/phpunit.el/latest
 [GNU Emacs]: https://www.gnu.org/software/emacs/
 [MELPA]: http://melpa.milkbox.net/
