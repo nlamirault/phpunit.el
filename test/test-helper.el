@@ -28,6 +28,7 @@
 
 (require 'ansi)
 (require 'f)
+(require 'undercover)
 
 
 (setq debugger-batch-max-lines (+ 50 max-lisp-eval-depth)
@@ -64,6 +65,13 @@
   "Load all unit test from PATH."
   (dolist (test-file (or argv (directory-files path t "-test.el$")))
     (load test-file nil t)))
+
+(defun load-library (file)
+  "Load current library from FILE."
+  (let ((path (s-concat phpunit-source-dir file)))
+    (message (ansi-yellow "[gotest] Load library from %s" path))
+    (undercover "*.el" (:exclude "*-test.el"))
+    (require 'phpunit path)))
 
 
 (provide 'test-helper)

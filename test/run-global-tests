@@ -28,6 +28,7 @@
   (add-to-list 'load-path current-directory)
   (require 'test-helper))
 
+
 (defmacro with-test-sandbox (&rest body)
   `(unwind-protect
        (condition-case nil ;ex
@@ -36,15 +37,12 @@
                (f-delete phpunit-sandbox-path 'force))
              (f-mkdir phpunit-sandbox-path)
              (cleanup-load-path)
-             (message (ansi-yellow "[phpunit] Load library"))
-             (require 'phpunit (s-concat phpunit-source-dir "/phpunit.el"))
-             (message (ansi-green "[phpunit] Execute unit tests"))
+             (load-library "/phpunit.el")
              ,@body)
          )))
          ;; (error
          ;;  (message (ansi-red "[Scame] Error during unit tests : %s" ex))))))
 
-;; run tests
 (with-test-sandbox
  (load-unit-tests phpunit-testsuite-dir)
  (ert-run-tests-batch-and-exit t))

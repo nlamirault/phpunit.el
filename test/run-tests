@@ -29,13 +29,10 @@
   `(unwind-protect
        (condition-case nil ;ex
            (let ((user-emacs-directory phpunit-sandbox-path))
-             ;; (unless (f-dir? phpunit-sandbox-path)
-             ;;   (f-mkdir phpunit-sandbox-path))
+             ;; (unless (f-dir? go-test-sandbox-path)
+             ;;   (f-mkdir go-test-sandbox-path))
              (cleanup-load-path)
-             (message (ansi-yellow "[phpunit] Load library"))
-             (require 'phpunit (s-concat phpunit-source-dir "/phpunit.el"))
-             (message (ansi-green "[phpunit] Execute unit tests %s"
-                                  phpunit-testsuite-dir))
+             (load-library "/phpunit.el")
              ,@body)
          )))
          ;; (error

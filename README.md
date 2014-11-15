@@ -5,7 +5,7 @@
 [![drone][badge-drone]][drone]
 [![Melpa Status](http://melpa.milkbox.net/packages/phpunit-badge.svg)](http://melpa.milkbox.net/#/phpunit)
 [![MELPA Stable](http://stable.melpa.org/packages/phpunit-badge.svg)](http://stable.melpa.org/#/phpunit)
-
+[![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.png)](https://coveralls.io/r/nlamirault/phpunit.el)
 
 Manage the [PHPUnit][] tests from Emacs.
 
@@ -81,7 +81,7 @@ Nicolas Lamirault <nicolas.lamirault@gmail.com>
 [LICENSE]: https://github.com/nlamirault/phpunit.el/blob/master/LICENSE
 [travis]: https://travis-ci.org/nlamirault/phpunit.el
 [badge-travis]: http://img.shields.io/travis/nlamirault/phpunit.el.svg?style=flat
-[badge-drone]: https://drone.io/github.com/nlamirault/phpunit.el/status.png
+s[badge-drone]: https://drone.io/github.com/nlamirault/phpunit.el/status.png
 [drone]: https://drone.io/github.com/nlamirault/phpunit.el/latest
 [GNU Emacs]: https://www.gnu.org/software/emacs/
 [MELPA]: http://melpa.milkbox.net/
