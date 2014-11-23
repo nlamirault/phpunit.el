@@ -7,7 +7,7 @@
 [![MELPA Stable](http://stable.melpa.org/packages/phpunit-badge.svg)](http://stable.melpa.org/#/phpunit)
 [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.png)](https://coveralls.io/r/nlamirault/phpunit.el)
 
-Manage the [PHPUnit][] tests from Emacs.
+Manage the [PHPUnit][] tests from Emacs (>= 24.3)
 
 ## Installation
 
