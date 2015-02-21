@@ -106,11 +106,11 @@
   ;; tramp mode. In that case, the phpunit-root-directory variable can
   ;; be set which takes precedence
   (if (boundp 'phpunit-root-directory)
-	  phpunit-root-directory
-	(let ((filename (buffer-file-name)))
-	  (when filename
-		(file-truename (or (locate-dominating-file filename phpunit-configuration-file)
-						   "./"))))))
+      phpunit-root-directory
+    (let ((filename (buffer-file-name)))
+      (when filename
+        (file-truename (or (locate-dominating-file filename phpunit-configuration-file)
+                           "./"))))))
 
 (defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
