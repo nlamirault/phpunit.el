@@ -26,8 +26,8 @@
 ;;; Code:
 
 
-(require 'test-helper)
-(require 'phpunit)
+;; (require 'test-helper)
+;; (require 'phpunit)
 
 
 (defun phpunit-command (&rest arg)
@@ -41,28 +41,38 @@
 ;; Arguments
 
 (ert-deftest test-phpunit-get-program-without-args ()
-  (should (string= (phpunit-command)
-		   (phpunit-get-program (phpunit-arguments "")))))
+  :tags '(arguments)
+  (with-test-sandbox
+   (should (string= (phpunit-command)
+                    (phpunit-get-program (phpunit-arguments ""))))))
 
 (ert-deftest test-phpunit-add-stop-on-error-argument ()
-  (let ((phpunit-stop-on-error t))
-    (should (string= (phpunit-command " --stop-on-error")
-		     (phpunit-get-program (phpunit-arguments ""))))))
+  :tags '(arguments)
+  (with-test-sandbox
+   (let ((phpunit-stop-on-error t))
+     (should (string= (phpunit-command " --stop-on-error")
+                      (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-stop-on-failure-argument ()
-  (let ((phpunit-stop-on-failure t))
-    (should (string= (phpunit-command " --stop-on-failure")
-		     (phpunit-get-program (phpunit-arguments ""))))))
+  :tags '(arguments)
+  (with-test-sandbox
+   (let ((phpunit-stop-on-failure t))
+     (should (string= (phpunit-command " --stop-on-failure")
+                      (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-stop-on-skipped-argument ()
-  (let ((phpunit-stop-on-skipped t))
-    (should (string= (phpunit-command " --stop-on-skipped")
-		     (phpunit-get-program (phpunit-arguments ""))))))
+  :tags '(arguments)
+  (with-test-sandbox
+   (let ((phpunit-stop-on-skipped t))
+     (should (string= (phpunit-command " --stop-on-skipped")
+                      (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-verbose-argument ()
-  (let ((phpunit-verbose-mode t))
-    (should (string= (phpunit-command " --verbose")
-		     (phpunit-get-program (phpunit-arguments ""))))))
+  :tags '(arguments)
+  (with-test-sandbox
+   (let ((phpunit-verbose-mode t))
+     (should (string= (phpunit-command " --verbose")
+                      (phpunit-get-program (phpunit-arguments "")))))))
 
 
 (provide 'phpunit-test)

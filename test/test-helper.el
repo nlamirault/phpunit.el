@@ -27,6 +27,8 @@
 ;;; Code:
 
 (require 'ansi)
+(require 'cl) ;; http://emacs.stackexchange.com/questions/2864/symbols-function-definition-is-void-cl-macroexpand-all-when-trying-to-instal
+(require 'ert)
 (require 'f)
 (require 'undercover)
 
@@ -63,6 +65,8 @@
 
 (defun load-unit-tests (path)
   "Load all unit test from PATH."
+  (message (ansi-green "[phpunit] Execute unit tests %s"
+                       path))
   (dolist (test-file (or argv (directory-files path t "-test.el$")))
     (load test-file nil t)))
 
@@ -72,6 +76,15 @@
     (message (ansi-yellow "[gotest] Load library from %s" path))
     (undercover "*.el" (:exclude "*-test.el"))
     (require 'phpunit path)))
+
+(defmacro with-test-sandbox (&rest body)
+  "Evaluate BODY in an empty sandbox directory."
+  `(unwind-protect
+       (condition-case nil ;ex
+           (let ((default-directory phpunit-source-dir))
+             (cleanup-load-path)
+             (load-library "/phpunit.el")
+             ,@body))))
 
 
 (provide 'test-helper)

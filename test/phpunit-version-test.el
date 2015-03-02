@@ -37,7 +37,7 @@
     ;;(message "PHPUnit.el : %s" lib-version)
     (message "PHPUnit.el Cask version: %s" cask-version)
     ;;(should (string= version (phpunit-mode-library-version)))))
-    (should (string= "0.3.0" cask-version))))
+    (should (string= "0.4.0" cask-version))))
 
 
 
