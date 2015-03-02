@@ -2,14 +2,14 @@
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.3.0
+;; Version: 0.4.0
 ;; Keywords: php, tests, phpunit
 
 ;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5"))
 
 ;;; License:
 
-;; Copyright (C) 2014 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2014, 2015 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -37,9 +37,6 @@
 ;; (define-key web-mode-map (kbd "C-x c") 'phpunit-current-class)
 ;; (define-key web-mode-map (kbd "C-x p") 'phpunit-current-project)
 
-;; Configuration
-(setq phpunit-configuration-file "phpunit.xml")
-
 ;;; Code:
 
 (require 's)
@@ -48,8 +45,6 @@
 (defgroup phpunit nil
   "PHPUnit utility"
   :group 'php)
-
-
 
 (defcustom phpunit-program "phpunit"
   "PHPUnit binary path."
@@ -79,6 +74,11 @@
 (defcustom phpunit-verbose-mode nil
   "Display debugging information during test execution."
   :type 'boolean
+  :group 'phpunit)
+
+(defcustom phpunit-configuration-file "phpunit.xml"
+  "The PHPUnit configuration file."
+  :type 'string
   :group 'phpunit)
 
 
