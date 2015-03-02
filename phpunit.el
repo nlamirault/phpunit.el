@@ -37,6 +37,9 @@
 ;; (define-key web-mode-map (kbd "C-x c") 'phpunit-current-class)
 ;; (define-key web-mode-map (kbd "C-x p") 'phpunit-current-project)
 
+;; Configuration
+(setq phpunit-configuration-file "phpunit.xml")
+
 ;;; Code:
 
 (require 's)
@@ -93,16 +96,21 @@
 `ARGS' corresponds to phpunit command line arguments."
   (s-concat phpunit-program " -c "
 	    (phpunit-get-root-directory)
-	    "phpunit.xml"
+	    phpunit-configuration-file
 	    args))
 
 
 (defun phpunit-get-root-directory()
   "Return the root directory to run tests."
-  (let ((filename (buffer-file-name)))
-    (when filename
-      (file-truename (or (locate-dominating-file filename "phpunit.xml")
-			 "./")))))
+  ;; The function doesn't detect the root directory when used with
+  ;; tramp mode. In that case, the phpunit-root-directory variable can
+  ;; be set which takes precedence
+  (if (boundp 'phpunit-root-directory)
+      phpunit-root-directory
+    (let ((filename (buffer-file-name)))
+      (when filename
+        (file-truename (or (locate-dominating-file filename phpunit-configuration-file)
+                           "./"))))))
 
 (defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."

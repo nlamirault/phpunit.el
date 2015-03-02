@@ -37,6 +37,15 @@ You can create some key bindings with these commands:
 (define-key web-mode-map (kbd "C-x p") 'phpunit-current-project)
 ```
 
+### Configuration
+
+The following configuration variables are available:
+
+```lisp
+(setq phpunit-configuration-file "phpunit.xml")
+(setq phpunit-root-directory "./")
+```
+
 ## Development
 
 ### Cask
