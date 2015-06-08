@@ -86,6 +86,11 @@
   "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
   "Regular expression for a PHP function.")
 
+;; Allow for error navigation after a failed test
+(add-hook 'compilation-mode-hook
+          (lambda ()
+            (interactive)
+            (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
 
 ;; Commands
 ;; -----------
