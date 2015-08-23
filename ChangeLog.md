@@ -1,7 +1,8 @@
 # phpunit.el ChangeLog
 
-## Version 0.5.0 (IN PROGRESS)
+## Version 0.5.0 (23/08/2015)
 
+- [#P7][] : `php-get-current-class` matches style convention (Thanks muddletoes)
 - [#P5][] : Add error navigation after a failed test (Thanks Ryckes)
 
 ## Version 0.4.0 (03/02/2015)
