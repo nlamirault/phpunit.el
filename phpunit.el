@@ -81,10 +81,13 @@
   :type 'string
   :group 'phpunit)
 
-
 (defconst php-beginning-of-defun-regexp
   "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
   "Regular expression for a PHP function.")
+
+(defconst php-label-regexp
+  "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"
+  "Valid syntax for a PHP label.")
 
 ;; Allow for error navigation after a failed test
 (add-hook 'compilation-mode-hook
@@ -120,7 +123,7 @@
 (defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
   (let* ((file (or file (buffer-file-name))))
-    (string-match "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*" (f-filename file))
+    (string-match php-label-regexp (f-filename file))
     (match-string 0 (f-filename file))))
 
 (defun phpunit-get-current-test ()
