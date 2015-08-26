@@ -87,11 +87,11 @@
 
 (defconst php-beginning-of-class
   "^\\s-*class\\s-+&?\\([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\)"
-  "Regular expression for PHP class"
-  )
-(defconst php-label-regexp
-  "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"
-  "Valid syntax for a PHP label.")
+  "Regular expression for a PHP class.")
+
+(defconst php-labelchar-regexp
+  "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]"
+  "Valid syntax for a character in a PHP label.")
 
 ;; Allow for error navigation after a failed test
 (add-hook 'compilation-mode-hook
@@ -124,23 +124,23 @@
         (file-truename (or (locate-dominating-file filename phpunit-configuration-file)
                            "./"))))))
 
-(defun phpunit-get-current-class (&optional file)
-  "Return the class name of the PHPUnit test for `FILE'."
-  (let* (
-	 ;; Normally, find classname by pattern matching backwards.
-	 (classname (save-excursion (re-search-backward php-beginning-of-class 0 t)
-				    (match-string 1)))
-	 ;; The 'file' parameter overrides this.
-	 ;; Fall back to the buffer filename if nothing else works.
-	 (filename (if (or file (not classname)) 
-		       (or (f-filename file)
-			   (f-filename buffer-file-name)
-			   )))
-	 (matchname (or filename classname)))
-    ;; always return the classname of the unit test.
-    (if (string-match "Test$" matchname)
-	matchname
-      (concat matchname "Test"))))
+
+
+(defun phpunit-get-current-class (&optional class-or-path)
+  "Return the canonical unit test class name associated with the current class or buffer."
+  (let ((class-name
+	 (let ((class-or-filename (f-filename (or class-or-path
+						  (save-excursion (re-search-backward php-beginning-of-class 0 t)
+								  (match-string 1))
+						  (buffer-file-name)))))
+	   (string-match (concat "\\(" php-labelchar-regexp "*\\)")
+			 class-or-filename)
+	   (match-string 1 class-or-filename))))
+    (if (string-match "Test$" class-name)
+	class-name
+      (concat class-name "Test"))))
+
+
 
 (defun phpunit-get-current-test ()
   (save-excursion
@@ -183,7 +183,7 @@
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (let ((args (s-concat " --filter '(" php-label-regexp "\\\\)?" (phpunit-get-current-class) "'")))
+  (let ((args (s-concat " --filter '(?<!" php-labelchar-regexp ")" (phpunit-get-current-class) "'")))
     (phpunit-run args)))
 
 
