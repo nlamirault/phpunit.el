@@ -128,7 +128,7 @@
   "Return the class name of the PHPUnit test for `FILE'."
   (let* (
 	 ;; Normally, find classname by pattern matching backwards.
-	 (classname (save-excursion (re-search-backward php-beginning-of-class)
+	 (classname (save-excursion (re-search-backward php-beginning-of-class 0 t)
 				    (match-string 1)))
 	 ;; The 'file' parameter overrides this.
 	 ;; Fall back to the buffer filename if nothing else works.
