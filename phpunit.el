@@ -85,6 +85,10 @@
   "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
   "Regular expression for a PHP function.")
 
+(defconst php-beginning-of-class
+  "^\\s-*class\\s-+&?\\([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\)"
+  "Regular expression for PHP class"
+  )
 (defconst php-label-regexp
   "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"
   "Valid syntax for a PHP label.")
@@ -122,9 +126,21 @@
 
 (defun phpunit-get-current-class (&optional file)
   "Return the class name of the PHPUnit test for `FILE'."
-  (let* ((file (or file (buffer-file-name))))
-    (string-match php-label-regexp (f-filename file))
-    (match-string 0 (f-filename file))))
+  (let* (
+	 ;; Normally, find classname by pattern matching backwards.
+	 (classname (save-excursion (re-search-backward php-beginning-of-class)
+				    (match-string 1)))
+	 ;; The 'file' parameter overrides this.
+	 ;; Fall back to the buffer filename if nothing else works.
+	 (filename (if (or file (not classname)) 
+		       (or (f-filename file)
+			   (f-filename buffer-file-name)
+			   )))
+	 (matchname (or filename classname)))
+    ;; always return the classname of the unit test.
+    (if (string-match "Test$" matchname)
+	matchname
+      (concat matchname "Test"))))
 
 (defun phpunit-get-current-test ()
   (save-excursion
@@ -167,7 +183,7 @@
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (let ((args (s-concat " --filter '" (phpunit-get-current-class) "'")))
+  (let ((args (s-concat " --filter '(" php-label-regexp "\\\\)?" (phpunit-get-current-class) "'")))
     (phpunit-run args)))
 
 
