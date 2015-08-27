@@ -34,9 +34,19 @@
   (apply 's-concat "phpunit -c " "phpunit.xml" arg))
 
 
-(ert-deftest test-phpunit-get-current-class ()
+(ert-deftest test-phpunit-get-class-from-file-path()
   (should (string= "PhpUnitTest"
-		   (phpunit-get-current-class "/tmp/foo/PhpUnitTest.php"))))
+		   (phpunit-get-current-class "/tmp/foo/PhpUnit.class.under.test.php"))))
+
+(ert-deftest test-phpunit-get-class-from-source-class()
+  (should (string= "PhpUnitTest"
+		   (phpunit-get-current-class "PhpUnit"))))
+
+(ert-deftest test-phpunit-get-class-from-unit-test-class()
+  (should (string= "PhpUnitTest"
+		   (phpunit-get-current-class "PhpUnitTest"))))
+
+
 
 ;; Arguments
 
