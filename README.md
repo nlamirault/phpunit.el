@@ -1,8 +1,7 @@
 # phpunit.el
 
 [![License GPL 3][badge-license]][LICENSE]
-[![travis][badge-travis]][travis]
-[![drone][badge-drone]][drone]
+[![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el)
 [![Melpa Status](http://melpa.milkbox.net/packages/phpunit-badge.svg)](http://melpa.milkbox.net/#/phpunit)
 [![MELPA Stable](http://stable.melpa.org/packages/phpunit-badge.svg)](http://stable.melpa.org/#/phpunit)
 [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.png)](https://coveralls.io/r/nlamirault/phpunit.el)
@@ -88,10 +87,7 @@ Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 [badge-license]: https://img.shields.io/badge/license-GPL_2-green.svg?style=flat
 [LICENSE]: https://github.com/nlamirault/phpunit.el/blob/master/LICENSE
-[travis]: https://travis-ci.org/nlamirault/phpunit.el
-[badge-travis]: http://img.shields.io/travis/nlamirault/phpunit.el.svg?style=flat
-[badge-drone]: https://drone.io/github.com/nlamirault/phpunit.el/status.png
-[drone]: https://drone.io/github.com/nlamirault/phpunit.el/latest
+
 [GNU Emacs]: https://www.gnu.org/software/emacs/
 [MELPA]: http://melpa.milkbox.net/
 [Cask]: http://cask.github.io/
