@@ -2,7 +2,7 @@
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.7.0
+;; Version: 0.6.1
 ;; Keywords: php, tests, phpunit
 
 ;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5"))
@@ -159,9 +159,14 @@
        (setq opts (s-concat opts " --verbose")))
      opts))
 
+(defun phpunit-get-compile-command (args)
+  (let ((column-setting-command (format "stty cols %d" (frame-width)))
+        (command-separator "; ")
+        (phpunit-command (phpunit-get-program (phpunit-arguments args))))
+    (concat column-setting-command command-separator phpunit-command)))
 
 (defun phpunit-run (args)
-  (compile (phpunit-get-program (phpunit-arguments args))))
+  (compile (phpunit-get-compile-command args)))
 
 
 ;; API
