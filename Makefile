@@ -46,9 +46,9 @@ help:
 	@echo -e "$(WARN_COLOR)- clean$(NO_COLOR)   : cleanup"
 	@echo -e "$(WARN_COLOR)- package$(NO_COLOR) : packaging"
 
+.PHONY: init
 init:
 	@echo -e "$(OK_COLOR)[$(APP)] Initialize environment$(NO_COLOR)"
-        @echo -e "Emacs version : $(EMACS) --version"
 	@$(CASK) --dev install
 
 elpa:
@@ -60,6 +60,7 @@ elpa:
 .PHONY: build
 build : elpa $(OBJECTS)
 
+.PHONY: test
 test: build
 	@echo -e "$(OK_COLOR)[$(APP)] Unit tests$(NO_COLOR)"
 	@$(CASK) exec ert-runner
