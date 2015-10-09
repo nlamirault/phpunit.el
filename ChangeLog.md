@@ -1,10 +1,14 @@
 # phpunit.el ChangeLog
 
-## Version 0.6.0 (27/08/2015)
+## Version 0.6.1 (09/10/2015)
+
+- #PR10: Set stty columns before running the phpunit command (Thanks Ryckes)
+
+## Version 0.6.0 (08/27/2015)
 
 - #PR9: Exact Class Names and Naming Conventions (Thanks muddletoes)
 
-## Version 0.5.0 (23/08/2015)
+## Version 0.5.0 (08/23/2015)
 
 - #PR7 : `php-get-current-class` matches style convention (Thanks muddletoes)
 - #PR5 : Add error navigation after a failed test (Thanks Ryckes)
