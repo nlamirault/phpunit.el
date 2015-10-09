@@ -159,9 +159,14 @@
        (setq opts (s-concat opts " --verbose")))
      opts))
 
+(defun phpunit-get-compile-command (args)
+  (let ((column-setting-command (format "stty cols %d" (frame-width)))
+        (command-separator "; ")
+        (phpunit-command (phpunit-get-program (phpunit-arguments args))))
+    (concat column-setting-command command-separator phpunit-command)))
 
 (defun phpunit-run (args)
-  (compile (phpunit-get-program (phpunit-arguments args))))
+  (compile (phpunit-get-compile-command args)))
 
 
 ;; API
