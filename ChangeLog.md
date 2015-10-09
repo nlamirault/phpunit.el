@@ -1,6 +1,6 @@
 # phpunit.el ChangeLog
 
-## Version 0.6.1 (09/10/2015)
+## Version 0.7.0 (09/10/2015)
 
 - #PR10: Set stty columns before running the phpunit command (Thanks Ryckes)
 
