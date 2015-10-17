@@ -106,11 +106,19 @@
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
 `ARGS' corresponds to phpunit command line arguments."
-  (s-concat phpunit-program " -c "
-	    (phpunit-get-root-directory)
-	    phpunit-configuration-file
-	    args))
-
+  (let ((phpunit-executable nil))
+    (setq phpunit-executable
+          (concat (locate-dominating-file (buffer-file-name) "vendor")
+                  "vendor/bin/phpunit"))
+    (unless phpunit-executable
+      (setq phpunit-executable phpunit-program)
+      )
+    (s-concat phpunit-executable " -c "
+              (phpunit-get-root-directory)
+              phpunit-configuration-file
+              args)
+    )
+  )
 
 (defun phpunit-get-root-directory()
   "Return the root directory to run tests."
