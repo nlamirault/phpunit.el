@@ -32,7 +32,10 @@
 
 (defun phpunit-command (&rest arg)
   ;;(apply 's-concat "phpunit -c " "phpunit.xml" arg))
-  (apply 's-concat "./vendor/bin/phpunit -c " "phpunit.xml" arg))
+  (let ((composer-dir (s-concat user-home-directory ".composer")))
+    (if (f-dir? composer-dir)
+        (apply 's-concat composer-dir " -c " "phpunit.xml" arg)
+      (apply 's-concat "./vendor/bin/phpunit -c " "phpunit.xml" arg))))
 
 
 (ert-deftest test-phpunit-get-class-from-file-path()
