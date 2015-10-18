@@ -64,28 +64,28 @@
   :tags '(arguments)
   (with-test-sandbox
    (let ((phpunit-stop-on-error t))
-     (should (string= (phpunit-command " --stop-on-error")
+     (should (s-suffix? (phpunit-command " --stop-on-error")
                       (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-stop-on-failure-argument ()
   :tags '(arguments)
   (with-test-sandbox
    (let ((phpunit-stop-on-failure t))
-     (should (string= (phpunit-command " --stop-on-failure")
+     (should (s-suffix? (phpunit-command " --stop-on-failure")
                       (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-stop-on-skipped-argument ()
   :tags '(arguments)
   (with-test-sandbox
    (let ((phpunit-stop-on-skipped t))
-     (should (string= (phpunit-command " --stop-on-skipped")
+     (should (s-suffix? (phpunit-command " --stop-on-skipped")
                       (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-verbose-argument ()
   :tags '(arguments)
   (with-test-sandbox
    (let ((phpunit-verbose-mode t))
-     (should (string= (phpunit-command " --verbose")
+     (should (s-suffix? (phpunit-command " --verbose")
                       (phpunit-get-program (phpunit-arguments "")))))))
 
 
