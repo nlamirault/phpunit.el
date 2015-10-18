@@ -34,7 +34,7 @@
   ;;(apply 's-concat "phpunit -c " "phpunit.xml" arg))
   (let ((composer-dir (s-concat (concat (getenv "HOME") "/") ".composer")))
     (if (f-dir? composer-dir)
-        (apply 's-concat composer-dir " -c " "phpunit.xml" arg)
+        (apply 's-concat composer-dir "vendor/bin/phpunit -c " "phpunit.xml" arg)
       (apply 's-concat "./vendor/bin/phpunit -c " "phpunit.xml" arg))))
 
 
