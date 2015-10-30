@@ -4,11 +4,11 @@
 [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.png)](https://coveralls.io/r/nlamirault/phpunit.el)
 
 Master :
-* [![MELPA Stable](http://stable.melpa.org/packages/phpunit-badge.svg)](http://stable.melpa.org/#/phpunit)
+* [![MELPA Stable](https://stable.melpa.org/packages/phpunit-badge.svg)](https://stable.melpa.org/#/phpunit)
 * [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/master.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/master)
 
 Develop :
-* [![Melpa Status](http://melpa.milkbox.net/packages/phpunit-badge.svg)](http://melpa.milkbox.net/#/phpunit)
+* [![Melpa Status](https://melpa.org/packages/phpunit-badge.svg)](https://melpa.org/#/phpunit)
 * [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop)
 
 Manage the [PHPUnit][] tests from Emacs (>= 24.3)
@@ -94,7 +94,7 @@ Nicolas Lamirault <nicolas.lamirault@gmail.com>
 [LICENSE]: https://github.com/nlamirault/phpunit.el/blob/master/LICENSE
 
 [GNU Emacs]: https://www.gnu.org/software/emacs/
-[MELPA]: http://melpa.milkbox.net/
+[MELPA]: https://melpa.org/
 [Cask]: http://cask.github.io/
 [Issue tracker]: https://github.com/nlamirault/phpunit.el/issues
 [PHPUnit]: http://phpunit.de
