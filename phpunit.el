@@ -113,7 +113,7 @@
     map)
   "Keymap for PHPUnit minor mode.")
 
-(add-to-list 'auto-mode-alist '("*\\.php\\'" . phpunit))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . phpunit))
 
 (define-minor-mode phpunit
   "PHPUnit minor mode"
@@ -167,26 +167,26 @@
       (match-string-no-properties 1))))
 
 (defun phpunit-helm-get-all-test-candidates ()
-  ""
-  (let ((test-functions '()))
-    (save-excursion
-      (beginning-of-buffer)
-      (while (search-forward-regexp php-beginning-of-defun-regexp nil t)
-	(add-to-list 'test-functions (format "%S" (match-string-no-properties 1)))))
-    (message "test-functions found ZOMG: %s" test-functions)
-    test-functions))
+  "Populates Helm with a list of test functions within a class/file."
+  (with-helm-current-buffer
+    (let ((test-functions '()))
+      (save-excursion
+	(beginning-of-buffer)
+	(while (search-forward-regexp php-beginning-of-defun-regexp nil t)
+	  (add-to-list 'test-functions (match-string-no-properties 1))))
+      test-functions)))
 
-(defvar phpunit-helm-select-test-source
+(setq phpunit-helm-select-test-source
   '((name . "PHPUnit Tests")
     (candidates . phpunit-helm-get-all-test-candidates)
     (action . (lambda (test)
-		(message "Test: %s" test)))))
+		(phpunit-selected-test test)))))
 
 (defun phpunit-helm-select-test ()
   "Use Helm to select which test should be ran."
   (interactive)
   (require 'helm)
-  (helm :sources 'phpunit-helm-select-test-source
+  (helm :sources '(phpunit-helm-select-test-source)
 	:buffer "*phpunit-function-tests*"))
 
 (defun phpunit-arguments (args)
