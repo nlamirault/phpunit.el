@@ -7,7 +7,7 @@
 ;; Version: 0.7.0
 ;; Keywords: php, tests, phpunit
 
-;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (Emacs "24"))
+;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (Emacs "24") (helm "0.0.0"))
 
 ;;; License:
 
