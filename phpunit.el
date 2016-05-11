@@ -1,11 +1,13 @@
 ;;; phpunit.el --- Launch PHP unit tests using phpunit
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;;         Eric Hansen <hansen.c.eric@gmail.com>
+;;
 ;; URL: https://github.com/nlamirault/phpunit.el
 ;; Version: 0.7.0
 ;; Keywords: php, tests, phpunit
 
-;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5"))
+;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (Emacs "24"))
 
 ;;; License:
 
@@ -99,9 +101,27 @@
             (interactive)
             (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
 
+;; Minor mode setup/configuration
+;; ------------
+
+(defvar phpunit-map
+  (let ((map (make-keymap)))
+    (define-key map (kbd "C-t f") 'phpunit-helm-function-tests)
+    (define-key map (kbd "C-t t") 'phpunit-current-test)
+    (define-key map (kbd "C-t c") 'phpunit-current-class)
+    (define-key map (kbd "C-t p") 'phpunit-current-project)
+    map)
+  "Keymap for PHPUnit minor mode.")
+
+(add-to-list 'auto-mode-alist '("*\\.php\\'" . phpunit))
+
+(define-minor-mode phpunit
+  "PHPUnit minor mode"
+  :lighter " phpunit"
+  :keymap phpunit-map)
+
 ;; Commands
 ;; -----------
-
 
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
@@ -140,12 +160,34 @@
 	class-name
       (concat class-name "Test"))))
 
-
-
 (defun phpunit-get-current-test ()
+  "Get the name of the current test function"
   (save-excursion
     (when (re-search-backward php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
+
+(defun phpunit-helm-get-all-test-candidates ()
+  ""
+  (let ((test-functions '()))
+    (save-excursion
+      (beginning-of-buffer)
+      (while (search-forward-regexp php-beginning-of-defun-regexp nil t)
+	(add-to-list 'test-functions (format "%S" (match-string-no-properties 1)))))
+    (message "test-functions found ZOMG: %s" test-functions)
+    test-functions))
+
+(defvar phpunit-helm-select-test-source
+  '((name . "PHPUnit Tests")
+    (candidates . phpunit-helm-get-all-test-candidates)
+    (action . (lambda (test)
+		(message "Test: %s" test)))))
+
+(defun phpunit-helm-select-test ()
+  "Use Helm to select which test should be ran."
+  (interactive)
+  (require 'helm)
+  (helm :sources 'phpunit-helm-select-test-source
+	:buffer "*phpunit-function-tests*"))
 
 (defun phpunit-arguments (args)
   (let ((opts args))
@@ -172,6 +214,12 @@
 ;; API
 ;; ----
 
+;;;###autoload
+(defun phpunit-selected-test (test-function)
+  "Launch PHPUnit on selected test (Helm)."
+  (interactive)
+  (let ((args (s-concat " --filter '" (phpunit-get-current-class) "::" test-function "'")))
+    (phpunit-run args)))
 
 ;;;###autoload
 (defun phpunit-current-test ()
