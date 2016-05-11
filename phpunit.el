@@ -101,25 +101,6 @@
             (interactive)
             (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
 
-;; Minor mode setup/configuration
-;; ------------
-
-(defvar phpunit-map
-  (let ((map (make-keymap)))
-    (define-key map (kbd "C-t f") 'phpunit-helm-function-tests)
-    (define-key map (kbd "C-t t") 'phpunit-current-test)
-    (define-key map (kbd "C-t c") 'phpunit-current-class)
-    (define-key map (kbd "C-t p") 'phpunit-current-project)
-    map)
-  "Keymap for PHPUnit minor mode.")
-
-(add-to-list 'auto-mode-alist '("\\.php\\'" . phpunit))
-
-(define-minor-mode phpunit
-  "PHPUnit minor mode"
-  :lighter " phpunit"
-  :keymap phpunit-map)
-
 ;; Commands
 ;; -----------
 
