@@ -1,6 +1,6 @@
 ;;; phpunit-test.el --- Tests for phpunit.el
 
-;; Copyright (C) Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2014, 2015, 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;;; Commentary:
 
