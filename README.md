@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.png)](https://coveralls.io/r/nlamirault/phpunit.el)
 
 Master :
-* [![MELPA Stable](http://stable.melpa.org/packages/phpunit-badge.svg)](http://stable.melpa.org/#/phpunit)
+* [![MELPA Stable](https://stable.melpa.org/packages/phpunit-badge.svg)](https://stable.melpa.org/#/phpunit)
 * [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/master.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/master)
 
 Develop :
