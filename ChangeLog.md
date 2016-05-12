@@ -1,5 +1,10 @@
 # phpunit.el ChangeLog
 
+## Version 0.8.0 (05/12/2016)
+
+- #PR16: Create a minor mode (thanks eric-hansen)
+- #PR12: Using the phpunit installed by Composer (thanks wangchen)
+
 ## Version 0.7.0 (09/10/2015)
 
 - #PR10: Set stty columns before running the phpunit command (Thanks Ryckes)
