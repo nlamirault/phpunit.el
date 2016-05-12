@@ -58,7 +58,7 @@
 ;; Arguments
 
 (ert-deftest test-phpunit-get-program-without-args ()
-  :tags '(current arguments)
+  :tags '(arguments)
   (with-test-sandbox
    (should (string= (phpunit-command)
                     (phpunit-get-program (phpunit-arguments ""))))))
