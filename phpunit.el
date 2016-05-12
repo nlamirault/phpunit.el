@@ -7,7 +7,7 @@
 ;; Version: 0.7.0
 ;; Keywords: php, tests, phpunit
 
-;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (Emacs "24") (helm "0.0.0"))
+;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (Emacs "24"))
 
 ;;; License:
 
@@ -32,7 +32,7 @@
 
 ;; Thanks to tox.el(https://github.com/chmouel/tox.el) from Chmouel Boudjnah.
 
-;; To use this code, bind the functions `phpunit-current-test', `phpunit-current-class', `php-helm-select-test`
+;; To use this code, bind the functions `phpunit-current-test', `phpunit-current-class',
 ;; and `phpunit-current-project' to convenient keys with something like :
 
 ;; (define-key web-mode-map (kbd "C-x t") 'phpunit-current-test)
@@ -147,29 +147,6 @@
     (when (re-search-backward php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
 
-(defun phpunit-helm-get-all-test-candidates ()
-  "Populates Helm with a list of test functions within a class/file."
-  (with-helm-current-buffer
-    (let ((test-functions '()))
-      (save-excursion
-	(beginning-of-buffer)
-	(while (search-forward-regexp php-beginning-of-defun-regexp nil t)
-	  (add-to-list 'test-functions (match-string-no-properties 1))))
-      test-functions)))
-
-(setq phpunit-helm-select-test-source
-  '((name . "PHPUnit Tests")
-    (candidates . phpunit-helm-get-all-test-candidates)
-    (action . (lambda (test)
-		(phpunit-selected-test test)))))
-
-(defun phpunit-helm-select-test ()
-  "Use Helm to select which test should be ran."
-  (interactive)
-  (require 'helm)
-  (helm :sources '(phpunit-helm-select-test-source)
-	:buffer "*phpunit-function-tests*"))
-
 (defun phpunit-arguments (args)
   (let ((opts args))
      (when phpunit-stop-on-error
@@ -194,13 +171,6 @@
 
 ;; API
 ;; ----
-
-;;;###autoload
-(defun phpunit-selected-test (test-function)
-  "Launch PHPUnit on selected test (Helm)."
-  (interactive)
-  (let ((args (s-concat " --filter '" (phpunit-get-current-class) "::" test-function "'")))
-    (phpunit-run args)))
 
 ;;;###autoload
 (defun phpunit-current-test ()
