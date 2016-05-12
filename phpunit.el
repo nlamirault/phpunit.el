@@ -1,11 +1,13 @@
 ;;; phpunit.el --- Launch PHP unit tests using phpunit
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;;         Eric Hansen <hansen.c.eric@gmail.com>
+;;
 ;; URL: https://github.com/nlamirault/phpunit.el
 ;; Version: 0.7.0
 ;; Keywords: php, tests, phpunit
 
-;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5"))
+;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (Emacs "24"))
 
 ;;; License:
 
@@ -30,7 +32,7 @@
 
 ;; Thanks to tox.el(https://github.com/chmouel/tox.el) from Chmouel Boudjnah.
 
-;; To use this code, bind the functions `phpunit-current-test', `phpunit-current-class'
+;; To use this code, bind the functions `phpunit-current-test', `phpunit-current-class',
 ;; and `phpunit-current-project' to convenient keys with something like :
 
 ;; (define-key web-mode-map (kbd "C-x t") 'phpunit-current-test)
@@ -102,7 +104,6 @@
 ;; Commands
 ;; -----------
 
-
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
 `ARGS' corresponds to phpunit command line arguments."
@@ -152,9 +153,8 @@
 	class-name
       (concat class-name "Test"))))
 
-
-
 (defun phpunit-get-current-test ()
+  "Get the name of the current test function"
   (save-excursion
     (when (re-search-backward php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
@@ -183,7 +183,6 @@
 
 ;; API
 ;; ----
-
 
 ;;;###autoload
 (defun phpunit-current-test ()
