@@ -7,7 +7,7 @@
 ;; Version: 0.8.0
 ;; Keywords: php, tests, phpunit
 
-;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (emacs "24.3"))
+;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (cl-lib "0.5") (emacs "24.3"))
 
 ;;; License:
 
@@ -41,6 +41,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 's)
 (require 'f)
 
@@ -78,9 +79,9 @@
   :type 'boolean
   :group 'phpunit)
 
-(defcustom phpunit-configuration-file "phpunit.xml"
+(defcustom phpunit-configuration-file nil
   "The PHPUnit configuration file."
-  :type 'string
+  :type '(choice string nil)
   :group 'phpunit)
 
 (defconst php-beginning-of-defun-regexp
@@ -118,26 +119,30 @@
     ;;               "vendor/bin/phpunit"))
     (unless phpunit-executable
       (setq phpunit-executable phpunit-program))
-    (s-concat phpunit-executable " -c "
-              (phpunit-get-root-directory)
-              phpunit-configuration-file
-              args)
-    )
-  )
+    (s-concat phpunit-executable
+              (if phpunit-configuration-file
+                  (s-concat " -c " phpunit-configuration-file)
+                "")
+              " "
+              args)))
 
-(defun phpunit-get-root-directory()
+(defun phpunit-get-root-directory ()
   "Return the root directory to run tests."
   ;; The function doesn't detect the root directory when used with
   ;; tramp mode. In that case, the phpunit-root-directory variable can
   ;; be set which takes precedence
   (if (boundp 'phpunit-root-directory)
       phpunit-root-directory
-    (let ((filename (buffer-file-name)))
-      (when filename
-        (file-truename (or (locate-dominating-file filename phpunit-configuration-file)
-                           "./"))))))
-
-
+    (let ((filename (buffer-file-name)) path)
+      (cond
+       ((null filename) default-directory)
+       (phpunit-configuration-file
+        (file-truename (locate-dominating-file filename phpunit-configuration-file)))
+       (:else
+        (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" ".git" "composer.json")
+                 do (setq path (locate-dominating-file filename file))
+                 if path return (file-truename path)
+                 finally return (file-truename "./")))))))
 
 (defun phpunit-get-current-class (&optional class-or-path)
   "Return the canonical unit test class name associated with the current class or buffer."
@@ -178,7 +183,9 @@
     (concat column-setting-command command-separator phpunit-command)))
 
 (defun phpunit-run (args)
-  (compile (phpunit-get-compile-command args)))
+  "Execute phpunit command with `ARGS'."
+  (let ((default-directory (phpunit-get-root-directory)))
+    (compile (phpunit-get-compile-command args))))
 
 
 ;; API
