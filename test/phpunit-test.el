@@ -31,11 +31,13 @@
 
 
 (defun phpunit-command (&rest arg)
-  ;;(apply 's-concat "phpunit -c " "phpunit.xml" arg))
-  (let ((composer-dir (s-concat (concat (getenv "HOME") "/") ".composer")))
+  (let ((composer-dir (s-concat (concat (getenv "HOME") "/") ".composer"))
+        (conf (if phpunit-configuration-file
+                  (s-concat "-c " phpunit-configuration-file " ")
+                "")))
     (if (f-dir? composer-dir)
-        (apply 's-concat composer-dir "/vendor/bin/phpunit -c " "phpunit.xml" arg)
-      (apply 's-concat "./vendor/bin/phpunit -c " "phpunit.xml" arg))))
+        (apply 's-concat composer-dir "/vendor/bin/phpunit " conf arg)
+      (apply 's-concat "./vendor/bin/phpunit " conf arg))))
 
 
 (ert-deftest test-phpunit-get-class-from-file-path()
@@ -54,6 +56,20 @@
 		   (phpunit-get-current-class "PhpUnitTest"))))
 
 
+;; Using configuration file
+
+(ert-deftest test-phpunit-with-configuration-file ()
+  :tags '(configuration-file)
+  (with-test-sandbox
+   (let ((phpunit-configuration-file "phpunit.xml"))
+     (should (s-contains? "-c phpunit.xml"
+                          (phpunit-get-program (phpunit-arguments "")))))))
+
+(ert-deftest test-phpunit-without-configuration-file ()
+  :tags '(configuration-file)
+  (with-test-sandbox
+   (should-not (s-contains? "-c phpunit.xml"
+                            (phpunit-get-program (phpunit-arguments ""))))))
 
 ;; Arguments
 
