@@ -1,5 +1,11 @@
 # phpunit.el ChangeLog
 
+## Version 0.9.0 (05/31/2016)
+
+- #PR19: Some problem fixes (Tramp, phpunit-get-root-directory,
+  Use phpunit -c option when set configuration file, ...) (thanks zonuexe)
+- Remove keybinding from phpunit-helm
+
 ## Version 0.8.0 (05/12/2016)
 
 - #PR16: Create a minor mode (thanks eric-hansen)

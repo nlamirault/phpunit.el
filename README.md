@@ -36,10 +36,18 @@ These functions are available :
 You can create some key bindings with these commands:
 
 ```lisp
-(define-key web-mode-map (kbd "C-x t") 'phpunit-current-test)
-(define-key web-mode-map (kbd "C-x c") 'phpunit-current-class)
-(define-key web-mode-map (kbd "C-x p") 'phpunit-current-project)
+(define-key web-mode-map (kbd "C-t t") 'phpunit-current-test)
+(define-key web-mode-map (kbd "C-t c") 'phpunit-current-class)
+(define-key web-mode-map (kbd "C-t p") 'phpunit-current-project)
 ```
+
+or use the minor mode :
+
+```lisp
+(add-to-list 'auto-mode-alist '("\\.php$'" . phpunit-mode))
+```
+
+
 
 ### Configuration
 

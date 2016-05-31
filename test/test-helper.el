@@ -1,6 +1,6 @@
 ;; test-helper.el --- Test helpers for Phpunit.el
 
-;; Copyright (C) Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2014, 2015, 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@chmouel.com>
 ;; Homepage: https://github.com/nlamirault/phpunit.el
