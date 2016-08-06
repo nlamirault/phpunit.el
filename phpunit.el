@@ -206,9 +206,7 @@
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (let ((args (s-concat " --filter '(?<!" php-labelchar-regexp ")" (phpunit-get-current-class) "'")))
-    (phpunit-run args)))
-
+  (phpunit-run (s-chop-prefix (phpunit-get-root-directory) buffer-file-name)))
 
 ;;;###autoload
 (defun phpunit-current-project ()
