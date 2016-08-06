@@ -119,6 +119,9 @@
     ;;               "vendor/bin/phpunit"))
     (unless phpunit-executable
       (setq phpunit-executable phpunit-program))
+    (when (file-remote-p phpunit-executable)
+      (setq phpunit-executable
+            (tramp-file-name-localname (tramp-dissect-file-name phpunit-executable))))
     (s-concat phpunit-executable
               (if phpunit-configuration-file
                   (s-concat " -c " phpunit-configuration-file)
