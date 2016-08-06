@@ -44,6 +44,8 @@
 (require 'cl-lib)
 (require 's)
 (require 'f)
+(eval-when-compile
+  (require 'rx))
 
 (defgroup phpunit nil
   "PHPUnit utility"
@@ -85,7 +87,16 @@
   :group 'phpunit)
 
 (defconst php-beginning-of-defun-regexp
-  "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
+  (eval-when-compile
+    (rx line-start
+        (* (syntax whitespace))
+        (* (or "abstract" "final" "private" "protected" "public" "static"))
+        "function"
+        (+ (syntax whitespace))
+        (? "&")
+        (group (+ (or (syntax word) (syntax symbol))))
+        (* (syntax whitespace))
+        "("))
   "Regular expression for a PHP function.")
 
 (defconst php-beginning-of-class
