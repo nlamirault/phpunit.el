@@ -1,5 +1,11 @@
 # phpunit.el ChangeLog
 
+## Version 0.10.0 (08/07/2016)
+
+- #PR23: Better regexp using rx (Thanks zonuexe)
+- #PR22: Simplify phpunit-current-class (Thanks zonuexe)
+- #PR21: Fix for Emacs 25.1 (Thanks zonuexe)
+
 ## Version 0.9.0 (05/31/2016)
 
 - #PR19: Some problem fixes (Tramp, phpunit-get-root-directory,
