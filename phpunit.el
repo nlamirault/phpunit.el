@@ -4,7 +4,7 @@
 ;;         Eric Hansen <hansen.c.eric@gmail.com>
 ;;
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.9.0
+;; Version: 0.10.0
 ;; Keywords: php, tests, phpunit
 
 ;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (cl-lib "0.5") (emacs "24.3"))
@@ -44,6 +44,8 @@
 (require 'cl-lib)
 (require 's)
 (require 'f)
+(eval-when-compile
+  (require 'rx))
 
 (defgroup phpunit nil
   "PHPUnit utility"
@@ -85,7 +87,16 @@
   :group 'phpunit)
 
 (defconst php-beginning-of-defun-regexp
-  "^\\s-*\\(?:\\(?:abstract\\|final\\|private\\|protected\\|public\\|static\\)\\s-+\\)*function\\s-+&?\\(\\(?:\\sw\\|\\s_\\)+\\)\\s-*("
+  (eval-when-compile
+    (rx line-start
+        (* (syntax whitespace))
+        (* (or "abstract" "final" "private" "protected" "public" "static"))
+        "function"
+        (+ (syntax whitespace))
+        (? "&")
+        (group (+ (or (syntax word) (syntax symbol))))
+        (* (syntax whitespace))
+        "("))
   "Regular expression for a PHP function.")
 
 (defconst php-beginning-of-class
@@ -119,6 +130,9 @@
     ;;               "vendor/bin/phpunit"))
     (unless phpunit-executable
       (setq phpunit-executable phpunit-program))
+    (when (file-remote-p phpunit-executable)
+      (setq phpunit-executable
+            (tramp-file-name-localname (tramp-dissect-file-name phpunit-executable))))
     (s-concat phpunit-executable
               (if phpunit-configuration-file
                   (s-concat " -c " phpunit-configuration-file)
@@ -206,9 +220,7 @@
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (let ((args (s-concat " --filter '(?<!" php-labelchar-regexp ")" (phpunit-get-current-class) "'")))
-    (phpunit-run args)))
-
+  (phpunit-run (s-chop-prefix (phpunit-get-root-directory) buffer-file-name)))
 
 ;;;###autoload
 (defun phpunit-current-project ()
