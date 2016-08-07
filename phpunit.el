@@ -178,6 +178,22 @@
     (when (re-search-backward php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
 
+(defun phpunit--listing-groups ()
+  "Return list of @group.
+
+https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.group"
+  (let ((phpunit-output (phpunit--execute "--list-groups")))
+    (with-temp-buffer
+      (insert phpunit-output)
+      (goto-char (point-min))
+      (search-forward "Available test group")
+      (move-beginning-of-line 1)
+      (next-line)
+      (cl-loop
+       for line in (s-split "\n" (buffer-substring-no-properties (point) (point-max)))
+       if (s-starts-with? " - " line)
+       collect (s-chop-prefix " - " line)))))
+
 (defun phpunit-arguments (args)
   (let ((opts args))
      (when phpunit-stop-on-error
@@ -195,6 +211,11 @@
         (command-separator "; ")
         (phpunit-command (phpunit-get-program (phpunit-arguments args))))
     (concat column-setting-command command-separator phpunit-command)))
+
+(defun phpunit--execute (args)
+  "Execute phpunit command with `ARGS'."
+  (let ((default-directory (phpunit-get-root-directory)))
+    (shell-command-to-string (phpunit-get-program (phpunit-arguments args)))))
 
 (defun phpunit-run (args)
   "Execute phpunit command with `ARGS'."
@@ -228,6 +249,13 @@
   (interactive)
   (phpunit-run ""))
 
+;;;###autoload
+(defun phpunit-group ()
+  "Launch PHPUnit for group."
+  (interactive)
+  (phpunit-run
+   (format "--group %s"
+           (completing-read "PHPUnit @group: " (phpunit--listing-groups)))))
 
 (provide 'phpunit)
 ;;; phpunit.el ends here
