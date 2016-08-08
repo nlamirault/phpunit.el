@@ -4,7 +4,7 @@
 ;;         Eric Hansen <hansen.c.eric@gmail.com>
 ;;
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.10.0
+;; Version: 0.11.0
 ;; Keywords: php, tests, phpunit
 
 ;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (cl-lib "0.5") (emacs "24.3"))
@@ -113,6 +113,8 @@
             (interactive)
             (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
 
+(defvar phpunit-last-group-cache nil)
+
 ;; Commands
 ;; -----------
 
@@ -178,6 +180,34 @@
     (when (re-search-backward php-beginning-of-defun-regexp nil t)
       (match-string-no-properties 1))))
 
+(defun phpunit--listing-groups ()
+  "Return list of @group.
+
+https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.group"
+  (let ((phpunit-output (phpunit--execute "--list-groups")))
+    (with-temp-buffer
+      (insert phpunit-output)
+      (goto-char (point-min))
+      (search-forward "Available test group")
+      (move-beginning-of-line 1)
+      (next-line)
+      (cl-loop
+       for line in (s-split "\n" (buffer-substring-no-properties (point) (point-max)))
+       if (s-starts-with? " - " line)
+       collect (s-chop-prefix " - " line)))))
+
+(defun phpunit--get-last-group (path)
+  "Get last group cache by `PATH'."
+  (unless phpunit-last-group-cache
+    (setq phpunit-last-group-cache (make-hash-table :test 'equal)))
+  (gethash path phpunit-last-group-cache nil))
+
+(defun phpunit--put-last-group (group path)
+  "Put last group `GROUP' cache by `PATH'."
+  (unless phpunit-last-group-cache
+    (setq phpunit-last-group-cache (make-hash-table :test 'equal)))
+  (puthash path group phpunit-last-group-cache))
+
 (defun phpunit-arguments (args)
   (let ((opts args))
      (when phpunit-stop-on-error
@@ -195,6 +225,11 @@
         (command-separator "; ")
         (phpunit-command (phpunit-get-program (phpunit-arguments args))))
     (concat column-setting-command command-separator phpunit-command)))
+
+(defun phpunit--execute (args)
+  "Execute phpunit command with `ARGS'."
+  (let ((default-directory (phpunit-get-root-directory)))
+    (shell-command-to-string (phpunit-get-program (phpunit-arguments args)))))
 
 (defun phpunit-run (args)
   "Execute phpunit command with `ARGS'."
@@ -228,6 +263,19 @@
   (interactive)
   (phpunit-run ""))
 
+;;;###autoload
+(defun phpunit-group (use-last-group &optional group)
+  "Launch PHPUnit for group."
+  (interactive "p")
+  (let* ((current-root-directory (phpunit-get-root-directory))
+         (last-group (phpunit--get-last-group current-root-directory)))
+    (when (called-interactively-p 'interactive)
+      (setq use-last-group (eq use-last-group 1))
+      (setq group (if (and use-last-group last-group)
+                      last-group
+                    (completing-read "PHPUnit @group: " (phpunit--listing-groups)))))
+    (phpunit-run (format "--group %s" group))
+    (phpunit--put-last-group group current-root-directory)))
 
 (provide 'phpunit)
 ;;; phpunit.el ends here

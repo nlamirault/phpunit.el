@@ -1,5 +1,9 @@
 # phpunit.el ChangeLog
 
+## Version 0.11.0 (08/08/2016)
+
+- #PR25: Add phpunit-group (Thanks zonuexe)
+
 ## Version 0.10.0 (08/07/2016)
 
 - #PR23: Better regexp using rx (Thanks zonuexe)
