@@ -1,6 +1,6 @@
 ;; test-helper.el --- Test helpers for Phpunit.el
 
-;; Copyright (C) 2014, 2015, 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2014-2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; Author: Nicolas Lamirault <nicolas.lamirault@chmouel.com>
 ;; Homepage: https://github.com/nlamirault/phpunit.el
@@ -73,7 +73,7 @@
 (defun load-library (file)
   "Load current library from FILE."
   (let ((path (s-concat phpunit-source-dir file)))
-    (message (ansi-yellow "[gotest] Load library from %s" path))
+    (message (ansi-yellow "[phpunit] Load library from %s" path))
     (undercover "*.el" (:exclude "*-test.el"))
     (require 'phpunit path)))
 

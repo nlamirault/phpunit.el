@@ -4,14 +4,14 @@
 ;;         Eric Hansen <hansen.c.eric@gmail.com>
 ;;
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.11.0
+;; Version: 0.12.0
 ;; Keywords: php, tests, phpunit
 
 ;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (cl-lib "0.5") (emacs "24.3"))
 
 ;;; License:
 
-;; Copyright (C) 2014, 2015, 2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2014-2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
