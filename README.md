@@ -64,12 +64,30 @@ management. Install it and retrieve dependencies :
     $ export PATH="$HOME/.cask/bin:$PATH"
     $ cask
 
+### Testing
 
-### Tests
+* Launch unit tests from shell
 
-Launch unit tests :
+        $ make clean test
 
-    $ make clean test
+* Using [overseer][] :
+
+Keybinding           | Description
+---------------------|------------------------------------------------------------
+<kbd>C-c , t</kbd>   | launch unit tests from buffer
+<kbd>C-c , b</kbd>   | launch unit tests
+<kbd>C-c , g</kbd>   | launch unit tests with tag (find, regexp, ...)
+
+* Tips:
+
+If you want to launch a single unit test, add a specify tag :
+
+```lisp
+(ert-deftest test-foobar ()
+  :tags '(current)
+  ```
+
+And launch it using : <kbd>C-c , g</kbd> and specify tag : *current*
 
 
 ## Support / Contribute
@@ -95,9 +113,11 @@ Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 [badge-license]: https://img.shields.io/badge/license-GPL_2-green.svg?style=flat
 [LICENSE]: https://github.com/nlamirault/phpunit.el/blob/master/LICENSE
+[Issue tracker]: https://github.com/nlamirault/phpunit.el/issues
+
+[PHPUnit]: http://phpunit.de
 
 [GNU Emacs]: https://www.gnu.org/software/emacs/
 [MELPA]: https://melpa.org/
 [Cask]: http://cask.github.io/
-[Issue tracker]: https://github.com/nlamirault/phpunit.el/issues
-[PHPUnit]: http://phpunit.de
+[Overseer]: https://github.com/tonini/overseer.el

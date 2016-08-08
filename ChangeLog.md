@@ -1,5 +1,12 @@
 # phpunit.el ChangeLog
 
+## Version 0.12.0 (08/08/2016)
+
+- `FIX` unit tests if *phpunit* executable exists.
+- `FIX` Unit tests launcher using *overseer*
+- Update documentation for unit testing
+- Setup code coverage badges for *master* and *develop* branches
+
 ## Version 0.11.0 (08/08/2016)
 
 - [#25](https://github.com/nlamirault/phpunit.el/pull/25): Add phpunit-group (Thanks zonuexe)
