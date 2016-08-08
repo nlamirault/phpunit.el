@@ -41,19 +41,22 @@
 
 
 (ert-deftest test-phpunit-get-class-from-file-path()
-  :tags '(tools)
-  (should (string= "PhpUnitTest"
-		   (phpunit-get-current-class "/tmp/foo/PhpUnit.class.under.test.php"))))
+  :tags '(tools current)
+  (with-test-sandbox
+   (should (string= "PhpUnitTest"
+                    (phpunit-get-current-class "/tmp/foo/PhpUnit.class.under.test.php")))))
 
 (ert-deftest test-phpunit-get-class-from-source-class()
-    :tags '(tools)
-  (should (string= "PhpUnitTest"
-		   (phpunit-get-current-class "PhpUnit"))))
+  :tags '(tools)
+  (with-test-sandbox
+   (should (string= "PhpUnitTest"
+                    (phpunit-get-current-class "PhpUnit")))))
 
 (ert-deftest test-phpunit-get-class-from-unit-test-class()
-    :tags '(tools)
-  (should (string= "PhpUnitTest"
-		   (phpunit-get-current-class "PhpUnitTest"))))
+  :tags '(tools)
+  (with-test-sandbox
+   (should (string= "PhpUnitTest"
+                    (phpunit-get-current-class "PhpUnitTest")))))
 
 
 ;; Using configuration file

@@ -73,7 +73,7 @@
 (defun load-library (file)
   "Load current library from FILE."
   (let ((path (s-concat phpunit-source-dir file)))
-    (message (ansi-yellow "[gotest] Load library from %s" path))
+    (message (ansi-yellow "[phpunit] Load library from %s" path))
     (undercover "*.el" (:exclude "*-test.el"))
     (require 'phpunit path)))
 
