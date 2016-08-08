@@ -113,6 +113,8 @@
             (interactive)
             (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
 
+(defvar phpunit-last-group-cache nil)
+
 ;; Commands
 ;; -----------
 
@@ -194,6 +196,18 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
        if (s-starts-with? " - " line)
        collect (s-chop-prefix " - " line)))))
 
+(defun phpunit--get-last-group (path)
+  "Get last group cache by `PATH'."
+  (unless phpunit-last-group-cache
+    (setq phpunit-last-group-cache (make-hash-table :test 'equal)))
+  (gethash path phpunit-last-group-cache nil))
+
+(defun phpunit--put-last-group (group path)
+  "Put last group `GROUP' cache by `PATH'."
+  (unless phpunit-last-group-cache
+    (setq phpunit-last-group-cache (make-hash-table :test 'equal)))
+  (puthash path group phpunit-last-group-cache))
+
 (defun phpunit-arguments (args)
   (let ((opts args))
      (when phpunit-stop-on-error
@@ -250,12 +264,18 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
   (phpunit-run ""))
 
 ;;;###autoload
-(defun phpunit-group ()
+(defun phpunit-group (use-last-group &optional group)
   "Launch PHPUnit for group."
-  (interactive)
-  (phpunit-run
-   (format "--group %s"
-           (completing-read "PHPUnit @group: " (phpunit--listing-groups)))))
+  (interactive "p")
+  (let* ((current-root-directory (phpunit-get-root-directory))
+         (last-group (phpunit--get-last-group current-root-directory)))
+    (when (called-interactively-p 'interactive)
+      (setq use-last-group (eq use-last-group 1))
+      (setq group (if (and use-last-group last-group)
+                      last-group
+                    (completing-read "PHPUnit @group: " (phpunit--listing-groups)))))
+    (phpunit-run (format "--group %s" group))
+    (phpunit--put-last-group group current-root-directory)))
 
 (provide 'phpunit)
 ;;; phpunit.el ends here
