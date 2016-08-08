@@ -9,9 +9,7 @@ Master :
 * [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.png)](https://coveralls.io/r/nlamirault/phpunit.el)
 
 Develop :
-* [![Melpa Status](https://melpa.org/packages/phpunit-badge.svg)](https://melpa.org/#/phpunit)
-* [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop)
-* [![Coverage Status](https://coveralls.io/repos/github/nlamirault/phpunit.el/badge.svg?branch=develop)](https://coveralls.io/github/nlamirault/phpunit.el?branch=develop)
+[![Melpa Status](https://melpa.org/packages/phpunit-badge.svg)](https://melpa.org/#/phpunit) [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop) [![Coverage Status](https://coveralls.io/repos/github/nlamirault/phpunit.el/badge.svg?branch=develop)](https://coveralls.io/github/nlamirault/phpunit.el?branch=develop)
 
 Manage the [PHPUnit][] tests from Emacs (>= 24.3)
 
