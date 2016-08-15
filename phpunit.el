@@ -209,18 +209,19 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
   (puthash path group phpunit-last-group-cache))
 
 (defun phpunit-arguments (args)
-  (let ((opts args))
-     (when phpunit-stop-on-error
-       (setq opts (s-concat opts " --stop-on-error")))
-     (when phpunit-stop-on-failure
-       (setq opts (s-concat opts " --stop-on-failure")))
-     (when phpunit-stop-on-skipped
-       (setq opts (s-concat opts " --stop-on-skipped")))
-     (when phpunit-verbose-mode
-       (setq opts (s-concat opts " --verbose")))
-     opts))
+  "Append options to `ARGS' by variables."
+  (when phpunit-stop-on-error
+    (setq args (s-concat args " --stop-on-error")))
+  (when phpunit-stop-on-failure
+    (setq args (s-concat args " --stop-on-failure")))
+  (when phpunit-stop-on-skipped
+    (setq args (s-concat args " --stop-on-skipped")))
+  (when phpunit-verbose-mode
+    (setq args (s-concat args " --verbose")))
+  args)
 
 (defun phpunit-get-compile-command (args)
+  "Return command string to execute PHPUnit from `ARGS'."
   (let ((column-setting-command (format "stty cols %d" (frame-width)))
         (command-separator "; ")
         (phpunit-command (phpunit-get-program (phpunit-arguments args))))
