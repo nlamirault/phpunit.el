@@ -198,9 +198,9 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit--get-last-group (path)
   "Get last group cache by `PATH'."
-  (unless phpunit-last-group-cache
-    (setq phpunit-last-group-cache (make-hash-table :test 'equal)))
-  (gethash path phpunit-last-group-cache nil))
+  (if (null phpunit-last-group-cache)
+      nil
+    (gethash path phpunit-last-group-cache nil)))
 
 (defun phpunit--put-last-group (group path)
   "Put last group `GROUP' cache by `PATH'."
