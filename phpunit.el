@@ -49,11 +49,13 @@
 
 (defgroup phpunit nil
   "PHPUnit utility"
+  :tag "PHPUnit"
   :group 'php)
 
 (defcustom phpunit-program "phpunit"
   "PHPUnit binary path."
-  :type 'file
+  :type '(choice (file   :tag "Path to PHPUnit executable file.")
+                 (string :tag "PHPUnit command name. (require command in PATH)"))
   :group 'phpunit)
 
 (defcustom phpunit-arg ""
