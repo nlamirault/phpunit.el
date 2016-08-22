@@ -50,43 +50,37 @@
 (defgroup phpunit nil
   "PHPUnit utility"
   :tag "PHPUnit"
+  :prefix "phpunit-"
   :group 'php)
 
 (defcustom phpunit-program "phpunit"
   "PHPUnit binary path."
   :type '(choice (file   :tag "Path to PHPUnit executable file.")
-                 (string :tag "PHPUnit command name. (require command in PATH)"))
-  :group 'phpunit)
+                 (string :tag "PHPUnit command name. (require command in PATH)")))
 
 (defcustom phpunit-arg ""
   "Argument to pass to phpunit."
-  :type 'string
-  :group 'phpunit)
+  :type 'string)
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-stop-on-failure nil
   "Stop execution upon first error or failure."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-stop-on-skipped nil
   "Stop execution upon first skipped test."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-verbose-mode nil
   "Display debugging information during test execution."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-configuration-file nil
   "The PHPUnit configuration file."
-  :type '(choice string nil)
-  :group 'phpunit)
+  :type '(choice string nil))
 
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
