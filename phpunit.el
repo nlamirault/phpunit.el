@@ -122,11 +122,12 @@
   "Return the command to launch unit test.
 `ARGS' corresponds to phpunit command line arguments."
   (let ((phpunit-executable nil)
-        (filename (or (buffer-file-name) "")))
+        (filename (or (buffer-file-name) ""))
+        (vendor-dir (locate-dominating-file "" "vendor")))
     (setq phpunit-executable
-          (or (executable-find "phpunit")
-              (concat (locate-dominating-file "" "vendor")
-                  "vendor/bin/phpunit")))
+          (if (and vendor-dir (file-exists-p (concat vendor-dir "vendor/bin/phpunit")))
+              (concat vendor-dir "vendor/bin/phpunit")
+            (executable-find "phpunit")))
     ;; (setq phpunit-executable
     ;;       (concat (locate-dominating-file filename "vendor")
     ;;               "vendor/bin/phpunit"))
