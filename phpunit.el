@@ -86,7 +86,8 @@
   (eval-when-compile
     (rx line-start
         (* (syntax whitespace))
-        (* (or "abstract" "final" "private" "protected" "public" "static"))
+        (* (or "abstract" "final" "private" "protected" "public" "static") (+ (syntax whitespace)))
+        (* (syntax whitespace))
         "function"
         (+ (syntax whitespace))
         (? "&")
