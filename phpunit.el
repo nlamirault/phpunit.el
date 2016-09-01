@@ -86,7 +86,8 @@
   (eval-when-compile
     (rx line-start
         (* (syntax whitespace))
-        (* (or "abstract" "final" "private" "protected" "public" "static"))
+        (* (or "abstract" "final" "private" "protected" "public" "static") (+ (syntax whitespace)))
+        (* (syntax whitespace))
         "function"
         (+ (syntax whitespace))
         (? "&")
@@ -96,7 +97,14 @@
   "Regular expression for a PHP function.")
 
 (defconst php-beginning-of-class
-  "^\\s-*class\\s-+&?\\([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\)"
+  (rx line-start
+        (* (syntax whitespace))
+        (? "final" (syntax whitespace))
+        (* (syntax whitespace))
+        "class"
+        (+ (syntax whitespace))
+        (group (+ (or (syntax word) (syntax symbol))))
+        (* (syntax whitespace)))
   "Regular expression for a PHP class.")
 
 (defconst php-labelchar-regexp
@@ -157,19 +165,11 @@
                  if path return (file-truename path)
                  finally return (file-truename "./")))))))
 
-(defun phpunit-get-current-class (&optional class-or-path)
+(defun phpunit-get-current-class ()
   "Return the canonical unit test class name associated with the current class or buffer."
-  (let ((class-name
-	 (let ((class-or-filename (f-filename (or class-or-path
-						  (save-excursion (re-search-backward php-beginning-of-class 0 t)
-								  (match-string 1))
-						  (buffer-file-name)))))
-	   (string-match (concat "\\(" php-labelchar-regexp "*\\)")
-			 class-or-filename)
-	   (match-string 1 class-or-filename))))
-    (if (string-match "Test$" class-name)
-	class-name
-      (concat class-name "Test"))))
+  (save-excursion
+    (when (re-search-backward php-beginning-of-class nil t)
+      (match-string-no-properties 1))))
 
 (defun phpunit-get-current-test ()
   "Get the name of the current test function"
