@@ -40,25 +40,6 @@
 ;;       (apply 's-concat "./vendor/bin/phpunit " conf arg))))
 
 
-(ert-deftest test-phpunit-get-class-from-file-path()
-  :tags '(tools)
-  (with-test-sandbox
-   (should (string= "PhpUnitTest"
-                    (phpunit-get-current-class "/tmp/foo/PhpUnit.class.under.test.php")))))
-
-(ert-deftest test-phpunit-get-class-from-source-class()
-  :tags '(tools)
-  (with-test-sandbox
-   (should (string= "PhpUnitTest"
-                    (phpunit-get-current-class "PhpUnit")))))
-
-(ert-deftest test-phpunit-get-class-from-unit-test-class()
-  :tags '(tools)
-  (with-test-sandbox
-   (should (string= "PhpUnitTest"
-                    (phpunit-get-current-class "PhpUnitTest")))))
-
-
 ;; Using configuration file
 
 (ert-deftest test-phpunit-with-configuration-file ()
