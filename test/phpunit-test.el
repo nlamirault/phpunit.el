@@ -40,24 +40,78 @@
 ;;       (apply 's-concat "./vendor/bin/phpunit " conf arg))))
 
 
-(ert-deftest test-phpunit-get-class-from-file-path()
+(ert-deftest test-phpunit-get-class()
   :tags '(tools)
-  (with-test-sandbox
-   (should (string= "PhpUnitTest"
-                    (phpunit-get-current-class "/tmp/foo/PhpUnit.class.under.test.php")))))
+  (should (string= "PhpUnitTest"
+                   (with-temp-buffer
+                     (insert "<?php
+class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
+    public function test() {
+    }
+}")
+                     (goto-char (point-max))
+                     (phpunit-get-current-class))))
 
-(ert-deftest test-phpunit-get-class-from-source-class()
+  (should (string= "PhpUnitTest"
+                   (with-temp-buffer
+                     (insert "<?php
+namespace MyProj;
+
+final class PhpUnitTest extends TestCase
+{
+    public function test_foo()
+    {
+    }
+}
+")
+                     (goto-char (point-max))
+                     (phpunit-get-current-class))))
+  (should (eq nil
+              (with-temp-buffer
+                (insert "<?php
+
+class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
+    public function test() {
+    }
+}")
+                (goto-char (point-min))
+                (phpunit-get-current-class)))))
+
+(ert-deftest test-phpunit-get-class()
   :tags '(tools)
-  (with-test-sandbox
-   (should (string= "PhpUnitTest"
-                    (phpunit-get-current-class "PhpUnit")))))
+  (should (string= "test"
+                   (with-temp-buffer
+                     (insert "<?php
+class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
+    public function test() {
+    }
+}")
+                     (goto-char (point-max))
+                     (phpunit-get-current-test))))
+  (should (string= "test_foo"
+                   (with-temp-buffer
+                     (insert "<?php
+namespace MyProj;
 
-(ert-deftest test-phpunit-get-class-from-unit-test-class()
-  :tags '(tools)
-  (with-test-sandbox
-   (should (string= "PhpUnitTest"
-                    (phpunit-get-current-class "PhpUnitTest")))))
+final class PhpUnitTest extends TestCase
+{
+    public function test_foo()
+    {
+    }
+}
+")
+                     (goto-char (point-max))
+                     (phpunit-get-current-test))))
 
+  (should (eq nil
+              (with-temp-buffer
+                (insert "<?php
+class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
+    public function test() {
+    }
+}")
+                (goto-char (point-min))
+                (phpunit-get-current-test)))))
 
 ;; Using configuration file
 
