@@ -51,6 +51,7 @@
   "PHPUnit utility"
   :tag "PHPUnit"
   :prefix "phpunit-"
+  :group 'tools
   :group 'php)
 
 (defcustom phpunit-program "phpunit"
