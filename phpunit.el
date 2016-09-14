@@ -54,14 +54,17 @@
   :group 'tools
   :group 'php)
 
-(defcustom phpunit-program "phpunit"
+(defcustom phpunit-program nil
   "PHPUnit binary path."
-  :type '(choice (file   :tag "Path to PHPUnit executable file.")
-                 (string :tag "PHPUnit command name. (require command in PATH)")))
+  :type '(choice (file     :tag "Path to PHPUnit executable file.")
+                 (function :tag "A function return PHPUnit executable file path.")
+                 (string   :tag "PHPUnit command name. (require command in PATH)")))
 
-(defcustom phpunit-arg ""
+(defcustom phpunit-arg nil
   "Argument to pass to phpunit."
-  :type 'string)
+  :type '(choice string
+                 (repeat string))
+  :group 'phpunit)
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
