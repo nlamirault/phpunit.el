@@ -1,5 +1,18 @@
 # phpunit.el ChangeLog
 
+## Version 0.14.0 (12/19/2016)
+
+- [#39](https://github.com/nlamirault/phpunit.el/pull/39): Support custom phpunit command (thanks zonuexe)
+- Modify phpunit detection algorithm
+- [#36](https://github.com/nlamirault/phpunit.el/pull/36): Modify custom group (thanks zonuexe)
+
+## Version 0.13.0 (03/09/2016)
+
+- [#34](https://github.com/nlamirault/phpunit.el/pull/34): Fix test phpunit-get-class (thanks zonuexe)
+- [#33](https://github.com/nlamirault/phpunit.el/pull/33): Fix phpunit-current-test (thanks zonuexe)
+- [#30](https://github.com/nlamirault/phpunit.el/pull/30): Modify phpunit command priority (thanks zonuexe)
+- [#29](https://github.com/nlamirault/phpunit.el/pull/29): Refactor customize (thanks zonuexe)
+
 ## Version 0.12.0 (08/08/2016)
 
 - `FIX` unit tests if *phpunit* executable exists.

@@ -4,7 +4,7 @@
 ;;         Eric Hansen <hansen.c.eric@gmail.com>
 ;;
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.12.0
+;; Version: 0.14.0
 ;; Keywords: php, tests, phpunit
 
 ;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (cl-lib "0.5") (emacs "24.3"))
@@ -49,48 +49,49 @@
 
 (defgroup phpunit nil
   "PHPUnit utility"
+  :tag "PHPUnit"
+  :prefix "phpunit-"
+  :group 'tools
   :group 'php)
 
-(defcustom phpunit-program "phpunit"
+(defcustom phpunit-program nil
   "PHPUnit binary path."
-  :type 'file
-  :group 'phpunit)
+  :type '(choice (file     :tag "Path to PHPUnit executable file.")
+                 (function :tag "A function return PHPUnit executable file path.")
+                 (string   :tag "PHPUnit command name. (require command in PATH)")))
 
-(defcustom phpunit-arg ""
+(defcustom phpunit-arg nil
   "Argument to pass to phpunit."
-  :type 'string
+  :type '(choice string
+                 (repeat string))
   :group 'phpunit)
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-stop-on-failure nil
   "Stop execution upon first error or failure."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-stop-on-skipped nil
   "Stop execution upon first skipped test."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-verbose-mode nil
   "Display debugging information during test execution."
-  :type 'boolean
-  :group 'phpunit)
+  :type 'boolean)
 
 (defcustom phpunit-configuration-file nil
   "The PHPUnit configuration file."
-  :type '(choice string nil)
-  :group 'phpunit)
+  :type '(choice string nil))
 
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
     (rx line-start
         (* (syntax whitespace))
-        (* (or "abstract" "final" "private" "protected" "public" "static"))
+        (* (or "abstract" "final" "private" "protected" "public" "static") (+ (syntax whitespace)))
+        (* (syntax whitespace))
         "function"
         (+ (syntax whitespace))
         (? "&")
@@ -100,7 +101,14 @@
   "Regular expression for a PHP function.")
 
 (defconst php-beginning-of-class
-  "^\\s-*class\\s-+&?\\([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\)"
+  (rx line-start
+        (* (syntax whitespace))
+        (? "final" (syntax whitespace))
+        (* (syntax whitespace))
+        "class"
+        (+ (syntax whitespace))
+        (group (+ (or (syntax word) (syntax symbol))))
+        (* (syntax whitespace)))
   "Regular expression for a PHP class.")
 
 (defconst php-labelchar-regexp
@@ -122,22 +130,24 @@
   "Return the command to launch unit test.
 `ARGS' corresponds to phpunit command line arguments."
   (let ((phpunit-executable nil)
-        (filename (or (buffer-file-name) "")))
+        (filename (or (buffer-file-name) ""))
+        (vendor-dir (locate-dominating-file "" "vendor")))
     (setq phpunit-executable
-          (or (executable-find "phpunit")
-              (concat (locate-dominating-file "" "vendor")
-                  "vendor/bin/phpunit")))
-    ;; (setq phpunit-executable
-    ;;       (concat (locate-dominating-file filename "vendor")
-    ;;               "vendor/bin/phpunit"))
+          (cond ((stringp phpunit-program) phpunit-program)
+                ((functionp phpunit-program) (funcall phpunit-program))
+                ((and vendor-dir (file-exists-p (concat vendor-dir "vendor/bin/phpunit")))
+                 (concat vendor-dir "vendor/bin/phpunit"))))
     (unless phpunit-executable
-      (setq phpunit-executable phpunit-program))
+      (setq phpunit-executable "phpunit"))
     (when (file-remote-p phpunit-executable)
       (setq phpunit-executable
             (tramp-file-name-localname (tramp-dissect-file-name phpunit-executable))))
     (s-concat phpunit-executable
+              (when phpunit-arg
+                (s-concat " " (if (stringp phpunit-arg) phpunit-arg
+                                (s-join " " (mapcar 'shell-quote-argument phpunit-arg)))))
               (if phpunit-configuration-file
-                  (s-concat " -c " phpunit-configuration-file)
+                  (s-concat " -c " (shell-quote-argument phpunit-configuration-file))
                 "")
               " "
               args)))
@@ -160,19 +170,11 @@
                  if path return (file-truename path)
                  finally return (file-truename "./")))))))
 
-(defun phpunit-get-current-class (&optional class-or-path)
+(defun phpunit-get-current-class ()
   "Return the canonical unit test class name associated with the current class or buffer."
-  (let ((class-name
-	 (let ((class-or-filename (f-filename (or class-or-path
-						  (save-excursion (re-search-backward php-beginning-of-class 0 t)
-								  (match-string 1))
-						  (buffer-file-name)))))
-	   (string-match (concat "\\(" php-labelchar-regexp "*\\)")
-			 class-or-filename)
-	   (match-string 1 class-or-filename))))
-    (if (string-match "Test$" class-name)
-	class-name
-      (concat class-name "Test"))))
+  (save-excursion
+    (when (re-search-backward php-beginning-of-class nil t)
+      (match-string-no-properties 1))))
 
 (defun phpunit-get-current-test ()
   "Get the name of the current test function"
@@ -198,9 +200,9 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit--get-last-group (path)
   "Get last group cache by `PATH'."
-  (unless phpunit-last-group-cache
-    (setq phpunit-last-group-cache (make-hash-table :test 'equal)))
-  (gethash path phpunit-last-group-cache nil))
+  (if (null phpunit-last-group-cache)
+      nil
+    (gethash path phpunit-last-group-cache nil)))
 
 (defun phpunit--put-last-group (group path)
   "Put last group `GROUP' cache by `PATH'."
@@ -209,18 +211,19 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
   (puthash path group phpunit-last-group-cache))
 
 (defun phpunit-arguments (args)
-  (let ((opts args))
-     (when phpunit-stop-on-error
-       (setq opts (s-concat opts " --stop-on-error")))
-     (when phpunit-stop-on-failure
-       (setq opts (s-concat opts " --stop-on-failure")))
-     (when phpunit-stop-on-skipped
-       (setq opts (s-concat opts " --stop-on-skipped")))
-     (when phpunit-verbose-mode
-       (setq opts (s-concat opts " --verbose")))
-     opts))
+  "Append options to `ARGS' by variables."
+  (when phpunit-stop-on-error
+    (setq args (s-concat args " --stop-on-error")))
+  (when phpunit-stop-on-failure
+    (setq args (s-concat args " --stop-on-failure")))
+  (when phpunit-stop-on-skipped
+    (setq args (s-concat args " --stop-on-skipped")))
+  (when phpunit-verbose-mode
+    (setq args (s-concat args " --verbose")))
+  args)
 
 (defun phpunit-get-compile-command (args)
+  "Return command string to execute PHPUnit from `ARGS'."
   (let ((column-setting-command (format "stty cols %d" (frame-width)))
         (command-separator "; ")
         (phpunit-command (phpunit-get-program (phpunit-arguments args))))
