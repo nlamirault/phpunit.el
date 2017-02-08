@@ -60,7 +60,7 @@ The following configuration variables are available:
 ``phpunit.el`` use [Cask](https://github.com/cask/cask) for dependencies
 management. Install it and retrieve dependencies :
 
-    $ curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+    $ curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
     $ export PATH="$HOME/.cask/bin:$PATH"
     $ cask
 
