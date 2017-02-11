@@ -1,5 +1,10 @@
 # phpunit.el ChangeLog
 
+## Version 0.15.0 (02/11/2017)
+
+- [#43](https://github.com/nlamirault/phpunit.el/pull/42): Rename test-helper to phpunit-test-helper (thanks zonuexe)
+- [#41](https://github.com/nlamirault/phpunit.el/pull/41): Remove bundled ert.el (thanks tarsius)
+
 ## Version 0.14.0 (12/19/2016)
 
 - [#39](https://github.com/nlamirault/phpunit.el/pull/39): Support custom phpunit command (thanks zonuexe)
