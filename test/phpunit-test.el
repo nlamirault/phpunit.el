@@ -24,11 +24,10 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Code:
-
-
-;; (require 'test-helper)
-;; (require 'phpunit)
-
+(require 'ert)
+(require 'f)
+(when (boundp 'ert-runner-test-path)
+  (load (f-expand "phpunit-test-helper.el" ert-runner-test-path) nil :nomessage))
 
 ;; (defun phpunit-command (&rest arg)
 ;;   (let ((composer-dir (s-concat (concat (getenv "HOME") "/") ".composer"))
@@ -117,14 +116,14 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
 
 (ert-deftest test-phpunit-with-configuration-file ()
   :tags '(configuration-file)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-configuration-file "phpunit.xml"))
      (should (s-contains? "-c phpunit.xml"
                           (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-without-configuration-file ()
   :tags '(configuration-file)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (should-not (s-contains? "-c phpunit.xml"
                             (phpunit-get-program (phpunit-arguments ""))))))
 
@@ -132,13 +131,13 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
 
 (ert-deftest test-phpunit-get-program-without-args ()
   :tags '(arguments)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (should (s-suffix? "phpunit "
                       (phpunit-get-program (phpunit-arguments ""))))))
 
 (ert-deftest test-phpunit-add-stop-on-error-argument ()
   :tags '(arguments current)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-stop-on-error t))
      (message "==> %s " (phpunit-get-program (phpunit-arguments "")))
      (should (s-suffix? "phpunit  --stop-on-error"
@@ -146,21 +145,21 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
 
 (ert-deftest test-phpunit-add-stop-on-failure-argument ()
   :tags '(arguments)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-stop-on-failure t))
      (should (s-suffix? "phpunit  --stop-on-failure"
                         (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-stop-on-skipped-argument ()
   :tags '(arguments)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-stop-on-skipped t))
      (should (s-suffix? "phpunit  --stop-on-skipped"
                         (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-add-verbose-argument ()
   :tags '(arguments)
-  (with-test-sandbox
+  (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-verbose-mode t))
      (should (s-suffix? "phpunit  --verbose"
                         (phpunit-get-program (phpunit-arguments "")))))))

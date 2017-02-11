@@ -24,9 +24,10 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Code:
-
-
-(require 'test-helper)
+(require 'ert)
+(require 'f)
+(when (boundp 'ert-runner-test-path)
+  (load (f-expand "phpunit-test-helper.el" ert-runner-test-path) nil :nomessage))
 
 (ert-deftest phpunit-mode-library-version ()
   :expected-result (if (executable-find "cask") :passed :failed)
@@ -38,8 +39,6 @@
     (message "PHPUnit.el Cask version: %s" cask-version)
     ;;(should (string= version (phpunit-mode-library-version)))))
     (should (string= "0.15.0" cask-version))))
-
-
 
 (provide 'phpunit-version-test)
 ;;; phpunit-version-test.el ends here
