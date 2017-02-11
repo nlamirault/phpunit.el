@@ -1,4 +1,4 @@
-;; test-helper.el --- Test helpers for Phpunit.el
+;; phpunit-test-helper.el --- Test helpers for phpunit.el
 
 ;; Copyright (C) 2014-2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
@@ -36,7 +36,7 @@
 (setq debugger-batch-max-lines (+ 50 max-lisp-eval-depth)
       debug-on-error t)
 
-(defvar username (getenv "HOME"))
+(defvar phpunit-test-helper-username (getenv "HOME"))
 
 (defconst phpunit-testsuite-dir (f-parent (f-this-file))
   "The testsuite directory.")
@@ -54,38 +54,37 @@
   (f-expand "sandbox" phpunit-testsuite-dir)
   "The sandbox path for phpunit.")
 
-(defun cleanup-load-path ()
+(defun phpunit-test-helper-cleanup-load-path ()
   "Remove home directory from 'load-path."
   (message (ansi-green "[phpunit] Cleanup path"))
   (mapc #'(lambda (path)
-            (when (string-match (s-concat username "/.emacs.d") path)
+            (when (string-match (s-concat phpunit-test-helper-username "/.emacs.d") path)
               (message (ansi-yellow "Suppression path %s" path))
               (setq load-path (delete path load-path))))
         load-path))
 
-(defun load-unit-tests (path)
+(defun phpunit-test-helper-load-unit-tests (path)
   "Load all unit test from PATH."
   (message (ansi-green "[phpunit] Execute unit tests %s"
                        path))
   (dolist (test-file (or argv (directory-files path t "-test.el$")))
     (load test-file nil t)))
 
-(defun load-library (file)
+(defun phpunit-test-helper-load-library (file)
   "Load current library from FILE."
   (let ((path (s-concat phpunit-source-dir file)))
     (message (ansi-yellow "[phpunit] Load library from %s" path))
     (undercover "*.el" (:exclude "*-test.el"))
     (require 'phpunit path)))
 
-(defmacro with-test-sandbox (&rest body)
+(defmacro phpunit-test-helper-with-test-sandbox (&rest body)
   "Evaluate BODY in an empty sandbox directory."
   `(unwind-protect
        (condition-case nil ;ex
            (let ((default-directory phpunit-source-dir))
-             (cleanup-load-path)
-             (load-library "/phpunit.el")
+             (phpunit-test-helper-cleanup-load-path)
+             (phpunit-test-helper-load-library "/phpunit.el")
              ,@body))))
 
-
-(provide 'test-helper)
-;;; test-helper.el ends here
+(provide 'phpunit-test-helper)
+;;; phpunit-test-helper.el ends here
