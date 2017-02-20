@@ -139,7 +139,6 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
   :tags '(arguments)
   (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-stop-on-error t))
-     (message "==> %s " (phpunit-get-program (phpunit-arguments "")))
      (should (s-suffix? "phpunit  --stop-on-error"
                         (phpunit-get-program (phpunit-arguments "")))))))
 
