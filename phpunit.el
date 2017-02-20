@@ -86,6 +86,10 @@
   "The PHPUnit configuration file."
   :type '(choice string nil))
 
+(defcustom phpunit-bootstrap-file nil
+  "The PHPUnit bootstrap file."
+  :type '(choice string nil))
+
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
     (rx line-start
@@ -147,7 +151,10 @@
                 (s-concat " " (if (stringp phpunit-arg) phpunit-arg
                                 (s-join " " (mapcar 'shell-quote-argument phpunit-arg)))))
               (if phpunit-configuration-file
-                  (s-concat " -c " (shell-quote-argument phpunit-configuration-file))
+                  (s-concat " -c " (shell-quote-argument (expand-file-name phpunit-configuration-file)))
+                "")
+              (if phpunit-bootstrap-file
+                  (s-concat " --bootstrap " (shell-quote-argument (expand-file-name phpunit-bootstrap-file)))
                 "")
               " "
               args)))
