@@ -118,7 +118,7 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
   :tags '(configuration-file)
   (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-configuration-file "phpunit.xml"))
-     (should (s-contains? "-c phpunit.xml"
+     (should (s-contains? (s-concat "-c " (f-long phpunit-configuration-file))
                           (phpunit-get-program (phpunit-arguments "")))))))
 
 (ert-deftest test-phpunit-without-configuration-file ()
@@ -136,7 +136,7 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
                       (phpunit-get-program (phpunit-arguments ""))))))
 
 (ert-deftest test-phpunit-add-stop-on-error-argument ()
-  :tags '(arguments current)
+  :tags '(arguments)
   (phpunit-test-helper-with-test-sandbox
    (let ((phpunit-stop-on-error t))
      (message "==> %s " (phpunit-get-program (phpunit-arguments "")))
