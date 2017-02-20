@@ -86,5 +86,4 @@
              (phpunit-test-helper-load-library "/phpunit.el")
              ,@body))))
 
-(provide 'phpunit-test-helper)
-;;; phpunit-test-helper.el ends here
+;;; test-helper.el ends here
