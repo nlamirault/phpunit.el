@@ -26,8 +26,6 @@
 ;;; Code:
 (require 'ert)
 (require 'f)
-(when (boundp 'ert-runner-test-path)
-  (load (f-expand "phpunit-test-helper.el" ert-runner-test-path) nil :nomessage))
 
 ;; (defun phpunit-command (&rest arg)
 ;;   (let ((composer-dir (s-concat (concat (getenv "HOME") "/") ".composer"))
