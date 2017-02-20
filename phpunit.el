@@ -257,7 +257,9 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
   (let ((args (s-concat " --filter '"
 			(phpunit-get-current-class)
 			"::"
-			(phpunit-get-current-test) "'")))
+			(phpunit-get-current-test) "'"
+                        " "
+                        (s-chop-prefix (phpunit-get-root-directory) buffer-file-name))))
     (phpunit-run args)))
 
 
