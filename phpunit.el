@@ -84,11 +84,13 @@
 
 (defcustom phpunit-configuration-file nil
   "The PHPUnit configuration file."
-  :type '(choice string nil))
+  :type '(choice (file  :tag "Path to phpunit.xml[.dist]")
+                 (const :tag "Automatically detect the path of phpunit.xml" nil)))
 
 (defcustom phpunit-bootstrap-file nil
   "The PHPUnit bootstrap file."
-  :type '(choice string nil))
+  :type '(choice (file  :tag "Path to PHPUnit bootstrap script")
+                 (const :tag "Not specify boostrap script" nil)))
 
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
