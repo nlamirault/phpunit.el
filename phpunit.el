@@ -92,6 +92,13 @@
   :type '(choice (file  :tag "Path to PHPUnit bootstrap script")
                  (const :tag "Not specify boostrap script" nil)))
 
+(defcustom phpunit-colorize nil
+  "Colorize PHPUnit compilation output buffer."
+  :type '(choice (const :tag "Do not specific --color argument" nil)
+                 (const :tag "--color=auto" "auto")
+                 (const :tag "--color=never" "never")
+                 (const :tag "--color=always" "always")))
+
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
     (rx line-start
@@ -120,12 +127,6 @@
 (defconst php-labelchar-regexp
   "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]"
   "Valid syntax for a character in a PHP label.")
-
-;; Allow for error navigation after a failed test
-(add-hook 'compilation-mode-hook
-          (lambda ()
-            (interactive)
-            (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
 
 (defvar phpunit-last-group-cache nil)
 
@@ -158,6 +159,8 @@
               (if phpunit-bootstrap-file
                   (s-concat " --bootstrap " (shell-quote-argument (expand-file-name phpunit-bootstrap-file)))
                 "")
+              (when phpunit-colorize
+                (format " --colors=%s" phpunit-colorize))
               " "
               args)))
 
@@ -238,6 +241,30 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
         (phpunit-command (phpunit-get-program (phpunit-arguments args))))
     (concat column-setting-command command-separator phpunit-command)))
 
+(defun phpunit--combile-buffer-add-error-regexp ()
+  "Allow for error navigation after a failed test."
+  (interactive)
+  (setq-local compilation-error-regexp-alist
+              (append (list '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))
+                      compilation-error-regexp-alist)))
+
+(defun phpunit--colorize-compilation-buffer ()
+  "Colorize PHPUnit compilation buffer."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region compilation-filter-start (point))))
+
+(defun phpunit--setup-compilation-buffer ()
+  "Setup hooks for PHPUnit compilation buffer."
+  (add-hook 'compilation-finish-functions #'phpunit--finish-compilation-buffer)
+  (add-hook 'compilation-mode-hook #'phpunit--combile-buffer-add-error-regexp)
+  (add-hook 'compilation-filter-hook #'phpunit--colorize-compilation-buffer))
+
+(defun phpunit--finish-compilation-buffer (&optional cur-buffer msg)
+  "Setup hooks for PHPUnit compilation buffer.
+`CUR-BUFFER' and `MSG' are ignore."
+  (remove-hook 'compilation-mode-hook #'phpunit--combile-buffer-add-error-regexp)
+  (remove-hook 'compilation-filter-hook #'phpunit--colorize-compilation-buffer))
+
 (defun phpunit--execute (args)
   "Execute phpunit command with `ARGS'."
   (let ((default-directory (phpunit-get-root-directory)))
@@ -245,7 +272,8 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit-run (args)
   "Execute phpunit command with `ARGS'."
-  (let ((default-directory (phpunit-get-root-directory)))
+  (let ((default-directory (phpunit-get-root-directory))
+        (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
 
 
