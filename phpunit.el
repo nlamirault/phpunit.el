@@ -241,13 +241,6 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
         (phpunit-command (phpunit-get-program (phpunit-arguments args))))
     (concat column-setting-command command-separator phpunit-command)))
 
-(defun phpunit--combile-buffer-add-error-regexp ()
-  "Allow for error navigation after a failed test."
-  (interactive)
-  (setq-local compilation-error-regexp-alist
-              (append (list '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))
-                      compilation-error-regexp-alist)))
-
 (defun phpunit--colorize-compilation-buffer ()
   "Colorize PHPUnit compilation buffer."
   (let ((inhibit-read-only t))
@@ -256,13 +249,12 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 (defun phpunit--setup-compilation-buffer ()
   "Setup hooks for PHPUnit compilation buffer."
   (add-hook 'compilation-finish-functions #'phpunit--finish-compilation-buffer)
-  (add-hook 'compilation-mode-hook #'phpunit--combile-buffer-add-error-regexp)
   (add-hook 'compilation-filter-hook #'phpunit--colorize-compilation-buffer))
 
 (defun phpunit--finish-compilation-buffer (&optional cur-buffer msg)
   "Setup hooks for PHPUnit compilation buffer.
 `CUR-BUFFER' and `MSG' are ignore."
-  (remove-hook 'compilation-mode-hook #'phpunit--combile-buffer-add-error-regexp)
+  (remove-hook 'compilation-finish-functions #'phpunit--finish-compilation-buffer)
   (remove-hook 'compilation-filter-hook #'phpunit--colorize-compilation-buffer))
 
 (defun phpunit--execute (args)
@@ -272,6 +264,7 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit-run (args)
   "Execute phpunit command with `ARGS'."
+  (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))
   (let ((default-directory (phpunit-get-root-directory))
         (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
