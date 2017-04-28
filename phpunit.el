@@ -99,6 +99,11 @@
                  (const :tag "--color=never" "never")
                  (const :tag "--color=always" "always")))
 
+(defcustom phpunit-hide-compilation-buffer-if-all-tests-pass nil
+  "Hide the compilation buffer if all tests pass."
+  :type 'boolean
+  :group 'phpunit)
+
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
     (rx line-start
@@ -127,6 +132,9 @@
 (defconst php-labelchar-regexp
   "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]"
   "Valid syntax for a character in a PHP label.")
+
+(when phpunit-hide-compilation-buffer-if-all-tests-pass
+  (add-hook 'compilation-finish-functions 'phpunit--hide-compilation-buffer-if-all-tests-pass))
 
 (defvar phpunit-last-group-cache nil)
 
@@ -269,6 +277,27 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
         (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
 
+(defun phpunit--hide-compilation-buffer-if-all-tests-pass (buffer status)
+  "Hide the compilation BUFFER if all tests pass.
+The STATUS describes how the compilation process finished."
+  (with-current-buffer buffer
+    (let* ((buffer-string (buffer-substring-no-properties
+                           (point-min) (point-max)))
+           (buffer-lines (s-lines buffer-string))
+           (ok-msg (car (cl-remove-if-not
+                         (lambda (x)
+                           (and (s-contains? "OK" x)
+                                (s-contains? "test" x)
+                                (s-contains? "assertion" x)))
+                         buffer-lines)))
+           (time-msg (car (cl-remove-if-not
+                           (lambda (x)
+                             (and (s-contains? "Time" x)
+                                  (s-contains? "Memory" x)))
+                           buffer-lines))))
+      (when ok-msg
+        (delete-windows-on buffer)
+        (message "%s %s" ok-msg time-msg)))))
 
 ;; API
 ;; ----
