@@ -224,10 +224,12 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit-get-compile-command (args)
   "Return command string to execute PHPUnit from `ARGS'."
-  (let ((column-setting-command (format "stty cols %d" (frame-width)))
-        (command-separator "; ")
-        (phpunit-command (phpunit-get-program (phpunit-arguments args))))
-    (concat column-setting-command command-separator phpunit-command)))
+  (if (memq system-type '(windows-nt ms-dos))
+      (phpunit-get-program (phpunit-arguments args))
+    (let ((column-setting-command (format "stty cols %d" (frame-width)))
+	  (command-separator "; ")
+	  (phpunit-command (phpunit-get-program (phpunit-arguments args))))
+      (concat column-setting-command command-separator phpunit-command))))
 
 (defun phpunit--execute (args)
   "Execute phpunit command with `ARGS'."
