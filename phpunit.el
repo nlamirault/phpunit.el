@@ -92,6 +92,18 @@
   :type '(choice (file  :tag "Path to PHPUnit bootstrap script")
                  (const :tag "Not specify boostrap script" nil)))
 
+(defcustom phpunit-colorize nil
+  "Colorize PHPUnit compilation output buffer."
+  :type '(choice (const :tag "Do not specific --color argument" nil)
+                 (const :tag "--color=auto" "auto")
+                 (const :tag "--color=never" "never")
+                 (const :tag "--color=always" "always")))
+
+(defcustom phpunit-hide-compilation-buffer-if-all-tests-pass nil
+  "Hide the compilation buffer if all tests pass."
+  :type 'boolean
+  :group 'phpunit)
+
 (defconst php-beginning-of-defun-regexp
   (eval-when-compile
     (rx line-start
@@ -121,11 +133,8 @@
   "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]"
   "Valid syntax for a character in a PHP label.")
 
-;; Allow for error navigation after a failed test
-(add-hook 'compilation-mode-hook
-          (lambda ()
-            (interactive)
-            (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))))
+(when phpunit-hide-compilation-buffer-if-all-tests-pass
+  (add-hook 'compilation-finish-functions 'phpunit--hide-compilation-buffer-if-all-tests-pass))
 
 (defvar phpunit-last-group-cache nil)
 
@@ -158,6 +167,8 @@
               (if phpunit-bootstrap-file
                   (s-concat " --bootstrap " (shell-quote-argument (expand-file-name phpunit-bootstrap-file)))
                 "")
+              (when phpunit-colorize
+                (format " --colors=%s" phpunit-colorize))
               " "
               args)))
 
@@ -233,10 +244,28 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit-get-compile-command (args)
   "Return command string to execute PHPUnit from `ARGS'."
-  (let ((column-setting-command (format "stty cols %d" (frame-width)))
-        (command-separator "; ")
-        (phpunit-command (phpunit-get-program (phpunit-arguments args))))
-    (concat column-setting-command command-separator phpunit-command)))
+  (if (memq system-type '(windows-nt ms-dos))
+      (phpunit-get-program (phpunit-arguments args))
+    (let ((column-setting-command (format "stty cols %d" (frame-width)))
+	  (command-separator "; ")
+	  (phpunit-command (phpunit-get-program (phpunit-arguments args))))
+      (concat column-setting-command command-separator phpunit-command))))
+
+(defun phpunit--colorize-compilation-buffer ()
+  "Colorize PHPUnit compilation buffer."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region compilation-filter-start (point))))
+
+(defun phpunit--setup-compilation-buffer ()
+  "Setup hooks for PHPUnit compilation buffer."
+  (add-hook 'compilation-finish-functions #'phpunit--finish-compilation-buffer)
+  (add-hook 'compilation-filter-hook #'phpunit--colorize-compilation-buffer))
+
+(defun phpunit--finish-compilation-buffer (&optional cur-buffer msg)
+  "Setup hooks for PHPUnit compilation buffer.
+`CUR-BUFFER' and `MSG' are ignore."
+  (remove-hook 'compilation-finish-functions #'phpunit--finish-compilation-buffer)
+  (remove-hook 'compilation-filter-hook #'phpunit--colorize-compilation-buffer))
 
 (defun phpunit--execute (args)
   "Execute phpunit command with `ARGS'."
@@ -245,9 +274,32 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 
 (defun phpunit-run (args)
   "Execute phpunit command with `ARGS'."
-  (let ((default-directory (phpunit-get-root-directory)))
+  (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))
+  (let ((default-directory (phpunit-get-root-directory))
+        (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
 
+(defun phpunit--hide-compilation-buffer-if-all-tests-pass (buffer status)
+  "Hide the compilation BUFFER if all tests pass.
+The STATUS describes how the compilation process finished."
+  (with-current-buffer buffer
+    (let* ((buffer-string (buffer-substring-no-properties
+                           (point-min) (point-max)))
+           (buffer-lines (s-lines buffer-string))
+           (ok-msg (car (cl-remove-if-not
+                         (lambda (x)
+                           (and (s-contains? "OK" x)
+                                (s-contains? "test" x)
+                                (s-contains? "assertion" x)))
+                         buffer-lines)))
+           (time-msg (car (cl-remove-if-not
+                           (lambda (x)
+                             (and (s-contains? "Time" x)
+                                  (s-contains? "Memory" x)))
+                           buffer-lines))))
+      (when ok-msg
+        (delete-windows-on buffer)
+        (message "%s %s" ok-msg time-msg)))))
 
 ;; API
 ;; ----
