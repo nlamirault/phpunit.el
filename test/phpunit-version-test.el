@@ -1,6 +1,6 @@
 ;;; phpunit-version-test.el --- Tests for version information
 
-;; Copyright (C) 2014-2016 Nicolas Lamirault <nicolas.lamirault@gmail.com>
+;; Copyright (C) 2014-2017 Nicolas Lamirault <nicolas.lamirault@gmail.com>
 
 ;;; Commentary:
 
@@ -36,7 +36,7 @@
     ;;(message "PHPUnit.el : %s" lib-version)
     (message "PHPUnit.el Cask version: %s" cask-version)
     ;;(should (string= version (phpunit-mode-library-version)))))
-    (should (string= "0.16.0" cask-version))))
+    (should (string= "0.17.0" cask-version))))
 
 (provide 'phpunit-version-test)
 ;;; phpunit-version-test.el ends here
