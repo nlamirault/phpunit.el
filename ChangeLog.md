@@ -1,5 +1,14 @@
 # phpunit.el ChangeLog
 
+## Version 0.16.0 (27/11/2017)
+
+- [#52](https://github.com/nlamirault/phpunit.el/pull/52): windows system prohibits the use of stty (tszg)
+- [#49](https://github.com/nlamirault/phpunit.el/pull/49): Add option to hide compilation buffer if all tests pass (thanks mallt)
+- [#48](https://github.com/nlamirault/phpunit.el/pull/48): Support colorize output (thanks zonuexe)
+- [#46](https://github.com/nlamirault/phpunit.el/pull/46): Add custom variables :tag (thanks zonuexe)
+- [#45](https://github.com/nlamirault/phpunit.el/pull/45): Add path to current test file for phpunit-current-test (thanks landakram)
+- [#44](https://github.com/nlamirault/phpunit.el/pull/44): Add ability to specify a bootstrap file (thanks landakram)
+
 ## Version 0.15.0 (02/11/2017)
 
 - [#43](https://github.com/nlamirault/phpunit.el/pull/42): Rename test-helper to phpunit-test-helper (thanks zonuexe)
