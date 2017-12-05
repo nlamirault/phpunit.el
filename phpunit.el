@@ -316,6 +316,18 @@ The STATUS describes how the compilation process finished."
 ;; ----
 
 ;;;###autoload
+(defun phpunit-set-dir-local-variable (variable)
+  "Create project file `.dir-locals.el' and set variable for `phpunit.el'."
+  (interactive
+   (list (intern (completing-read "Select variable name: "
+                                  '(phpunit-executable phpunit-directory)))))
+  (add-dir-local-variable nil variable
+                          (read-string
+                           (cl-case variable
+                             ('phpunit-executable "Input a command to run PHPUnit: ")
+                             ('phpunit-root-directory "Input a directory path to execute PHPUnit: ")))))
+
+;;;###autoload
 (defun phpunit-current-test ()
   "Launch PHPUnit on curent test."
   (interactive)
