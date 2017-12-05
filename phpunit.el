@@ -141,10 +141,10 @@
 (progn
   (defvar-local phpunit-root-directory nil)
   (put 'phpunit-root-directory 'safe-local-variable #'stringp)
-  (defvar-local phpunit-executable nil)
   (defvar-local phpunit-executable nil
     "PHPUnit command or path to executable file.")
-  (put 'phpunit-executable 'safe-local-variable #'stringp))
+  (put 'phpunit-executable 'safe-local-variable
+       #'(lambda (v) (or (null v) (stringp v) (functionp v)))))
 
 (when phpunit-hide-compilation-buffer-if-all-tests-pass
   (add-hook 'compilation-finish-functions 'phpunit--hide-compilation-buffer-if-all-tests-pass))
@@ -156,14 +156,14 @@
 
 (defun phpunit--find-executable (directory)
   "Get PHPUnit executable command in `DIRECTORY'."
-  (cond (phpunit-executable phpunit-executable)
-        ((stringp phpunit-default-program) phpunit-default-program)
-        ((functionp phpunit-default-program) (funcall phpunit-default-program))
-        ((and directory
-              (file-exists-p (concat directory "vendor/bin/phpunit")))
-         (concat directory "vendor/bin/phpunit"))
-        ((executable-find "phpunit") "phpunit")
-        (t (error "PHPUnit command/package is not installed"))))
+  (let ((executable (or phpunit-executable phpunit-default-program)))
+    (cond ((stringp executable) executable)
+          ((functionp executable) (funcall executable))
+          ((and directory
+                (file-exists-p (concat directory "vendor/bin/phpunit")))
+           (concat directory "vendor/bin/phpunit"))
+          ((executable-find "phpunit") "phpunit")
+          (t (error "PHPUnit command/package is not installed")))))
 
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
