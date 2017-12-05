@@ -137,6 +137,8 @@
 
 ;;;###autoload
 (progn
+  (defvar-local phpunit-root-directory nil)
+  (put 'phpunit-root-directory 'safe-local-variable #'stringp)
   (defvar-local phpunit-executable nil)
   (put 'phpunit-executable 'safe-local-variable #'stringp))
 
