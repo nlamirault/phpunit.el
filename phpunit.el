@@ -214,7 +214,7 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
       (goto-char (point-min))
       (search-forward "Available test group")
       (move-beginning-of-line 1)
-      (next-line)
+      (forward-line)
       (cl-loop
        for line in (s-split "\n" (buffer-substring-no-properties (point) (point-max)))
        if (s-starts-with? " - " line)
