@@ -135,6 +135,11 @@
   "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]"
   "Valid syntax for a character in a PHP label.")
 
+;;;###autoload
+(progn
+  (defvar-local phpunit-executable nil)
+  (put 'phpunit-executable 'safe-local-variable #'stringp))
+
 (when phpunit-hide-compilation-buffer-if-all-tests-pass
   (add-hook 'compilation-finish-functions 'phpunit--hide-compilation-buffer-if-all-tests-pass))
 
