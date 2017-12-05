@@ -61,7 +61,7 @@ elpa:
 build : elpa $(OBJECTS)
 
 .PHONY: test
-test: build
+test: build vendor/bin/phpunit
 	@echo -e "$(OK_COLOR)[$(APP)] Unit tests$(NO_COLOR)"
 	@$(CASK) exec ert-runner
 
@@ -93,6 +93,9 @@ package: clean pkg-el
 	cp dist/$(ARCHIVE) .
 	gzip $(ARCHIVE)
 	rm -fr dist
+
+vendor/bin/phpunit:
+	php -r 'is_dir("vendor/bin") or mkdir("vendor/bin", 0777, true); touch("vendor/bin/phpunit");'
 
 %.elc : %.el
 	@$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
