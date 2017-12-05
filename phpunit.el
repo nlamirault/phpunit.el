@@ -56,8 +56,8 @@
   :group 'tools
   :group 'php)
 
-(defcustom phpunit-program nil
-  "PHPUnit binary path."
+(defcustom phpunit-default-program nil
+  "PHPUnit command or path to executable file or a function that returns these string."
   :type '(choice (file     :tag "Path to PHPUnit executable file.")
                  (function :tag "A function return PHPUnit executable file path.")
                  (string   :tag "PHPUnit command name. (require command in PATH)")))
@@ -67,6 +67,8 @@
   :type '(choice string
                  (repeat string))
   :group 'phpunit)
+(defvar phpunit-program)
+(make-obsolete-variable 'phpunit-program 'phpunit-default-program "0.18.0")
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
@@ -140,6 +142,8 @@
   (defvar-local phpunit-root-directory nil)
   (put 'phpunit-root-directory 'safe-local-variable #'stringp)
   (defvar-local phpunit-executable nil)
+  (defvar-local phpunit-executable nil
+    "PHPUnit command or path to executable file.")
   (put 'phpunit-executable 'safe-local-variable #'stringp))
 
 (when phpunit-hide-compilation-buffer-if-all-tests-pass
@@ -153,8 +157,8 @@
 (defun phpunit--find-executable (directory)
   "Get PHPUnit executable command in `DIRECTORY'."
   (cond (phpunit-executable phpunit-executable)
-        ((stringp phpunit-program) phpunit-program)
-        ((functionp phpunit-program) (funcall phpunit-program))
+        ((stringp phpunit-default-program) phpunit-default-program)
+        ((functionp phpunit-default-program) (funcall phpunit-default-program))
         ((and directory
               (file-exists-p (concat directory "vendor/bin/phpunit")))
          (concat directory "vendor/bin/phpunit"))
