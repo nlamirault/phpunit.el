@@ -42,6 +42,8 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'compile)
+(require 'tramp)
 (require 's)
 (require 'f)
 (eval-when-compile
