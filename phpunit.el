@@ -62,13 +62,11 @@
                  (function :tag "A function return PHPUnit executable file path.")
                  (string   :tag "PHPUnit command name. (require command in PATH)")))
 
-(defcustom phpunit-arg nil
-  "Argument to pass to phpunit."
-  :type '(choice string
-                 (repeat string))
-  :group 'phpunit)
 (defvar phpunit-program)
 (make-obsolete-variable 'phpunit-program 'phpunit-default-program "0.18.0")
+
+(defvar phpunit-arg)
+(make-obsolete-variable 'phpunit-arg 'phpunit-args "0.18.0")
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
@@ -141,6 +139,9 @@
 (progn
   (defvar-local phpunit-root-directory nil)
   (put 'phpunit-root-directory 'safe-local-variable #'stringp)
+  (defvar-local phpunit-args nil
+    "Argument to pass to phpunit command.")
+  (put 'phpunit-args 'safe-local-variable #'(lambda (v) (or (stringp v) (listp v))))
   (defvar-local phpunit-executable nil
     "PHPUnit command or path to executable file.")
   (put 'phpunit-executable 'safe-local-variable
@@ -174,9 +175,9 @@
       (setq executable
             (tramp-file-name-localname (tramp-dissect-file-name executable))))
     (s-concat executable
-              (when phpunit-arg
-                (s-concat " " (if (stringp phpunit-arg) phpunit-arg
-                                (s-join " " (mapcar 'shell-quote-argument phpunit-arg)))))
+              (when phpunit-args
+                (s-concat " " (if (stringp phpunit-args) phpunit-args
+                                (s-join " " (mapcar 'shell-quote-argument phpunit-args)))))
               (if phpunit-configuration-file
                   (s-concat " -c " (shell-quote-argument (expand-file-name phpunit-configuration-file)))
                 "")
