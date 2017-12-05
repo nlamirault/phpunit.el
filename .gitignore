@@ -1,3 +1,4 @@
-.cask/
+/.cask
+/vendor
 *.elc
 elpa
