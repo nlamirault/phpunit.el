@@ -137,7 +137,8 @@
 
 ;;;###autoload
 (progn
-  (defvar-local phpunit-root-directory nil)
+  (defvar-local phpunit-root-directory nil
+    "Directory path to execute PHPUnit.")
   (put 'phpunit-root-directory 'safe-local-variable #'stringp)
   (defvar-local phpunit-args nil
     "Argument to pass to phpunit command.")
