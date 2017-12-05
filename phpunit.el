@@ -148,23 +148,26 @@
 ;; Commands
 ;; -----------
 
+(defun phpunit--find-executable (directory)
+  "Get PHPUnit executable command in `DIRECTORY'."
+  (cond (phpunit-executable phpunit-executable)
+        ((stringp phpunit-program) phpunit-program)
+        ((functionp phpunit-program) (funcall phpunit-program))
+        ((and directory
+              (file-exists-p (concat directory "vendor/bin/phpunit")))
+         (concat directory "vendor/bin/phpunit"))
+        ((executable-find "phpunit") "phpunit")
+        (t (error "PHPUnit command/package is not installed"))))
+
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
 `ARGS' corresponds to phpunit command line arguments."
-  (let ((phpunit-executable nil)
-        (filename (or (buffer-file-name) ""))
-        (vendor-dir (locate-dominating-file "" "vendor")))
-    (setq phpunit-executable
-          (cond ((stringp phpunit-program) phpunit-program)
-                ((functionp phpunit-program) (funcall phpunit-program))
-                ((and vendor-dir (file-exists-p (concat vendor-dir "vendor/bin/phpunit")))
-                 (concat vendor-dir "vendor/bin/phpunit"))))
-    (unless phpunit-executable
-      (setq phpunit-executable "phpunit"))
-    (when (file-remote-p phpunit-executable)
-      (setq phpunit-executable
-            (tramp-file-name-localname (tramp-dissect-file-name phpunit-executable))))
-    (s-concat phpunit-executable
+  (let* ((vendor-dir (locate-dominating-file default-directory "vendor"))
+         (executable (phpunit--find-executable vendor-dir)))
+    (when (file-remote-p default-directory)
+      (setq executable
+            (tramp-file-name-localname (tramp-dissect-file-name executable))))
+    (s-concat executable
               (when phpunit-arg
                 (s-concat " " (if (stringp phpunit-arg) phpunit-arg
                                 (s-join " " (mapcar 'shell-quote-argument phpunit-arg)))))
