@@ -184,23 +184,22 @@
               " "
               args)))
 
-(defun phpunit-get-root-directory ()
+(defun phpunit-get-root-directory (&optional force-real-path)
   "Return the root directory to run tests."
   ;; The function doesn't detect the root directory when used with
   ;; tramp mode. In that case, the phpunit-root-directory variable can
   ;; be set which takes precedence
-  (if (boundp 'phpunit-root-directory)
-      phpunit-root-directory
-    (let ((filename (buffer-file-name)) path)
-      (cond
-       ((null filename) default-directory)
-       (phpunit-configuration-file
-        (file-truename (locate-dominating-file filename phpunit-configuration-file)))
-       (:else
-        (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" ".git" "composer.json")
-                 do (setq path (locate-dominating-file filename file))
-                 if path return (file-truename path)
-                 finally return (file-truename "./")))))))
+  (or (and (not force-real-path) phpunit-root-directory)
+      (let ((filename (buffer-file-name)) path)
+        (cond
+         ((null filename) default-directory)
+         (phpunit-configuration-file
+          (file-truename (locate-dominating-file filename phpunit-configuration-file)))
+         (:else
+          (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" ".git" "composer.json")
+                   do (setq path (locate-dominating-file filename file))
+                   if path return (file-truename path)
+                   finally return (file-truename "./")))))))
 
 (defun phpunit-get-current-class ()
   "Return the canonical unit test class name associated with the current class or buffer."
@@ -333,7 +332,7 @@ The STATUS describes how the compilation process finished."
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (phpunit-run (s-chop-prefix (phpunit-get-root-directory) buffer-file-name)))
+  (phpunit-run (s-chop-prefix (phpunit-get-root-directory t) buffer-file-name)))
 
 ;;;###autoload
 (defun phpunit-current-project ()
