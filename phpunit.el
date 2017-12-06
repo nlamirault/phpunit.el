@@ -56,17 +56,17 @@
   :group 'tools
   :group 'php)
 
-(defcustom phpunit-program nil
-  "PHPUnit binary path."
+(defcustom phpunit-default-program nil
+  "PHPUnit command or path to executable file or a function that returns these string."
   :type '(choice (file     :tag "Path to PHPUnit executable file.")
                  (function :tag "A function return PHPUnit executable file path.")
                  (string   :tag "PHPUnit command name. (require command in PATH)")))
 
-(defcustom phpunit-arg nil
-  "Argument to pass to phpunit."
-  :type '(choice string
-                 (repeat string))
-  :group 'phpunit)
+(defvar phpunit-program)
+(make-obsolete-variable 'phpunit-program 'phpunit-default-program "0.18.0")
+
+(defvar phpunit-arg)
+(make-obsolete-variable 'phpunit-arg 'phpunit-args "0.18.0")
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
@@ -137,10 +137,16 @@
 
 ;;;###autoload
 (progn
-  (defvar-local phpunit-root-directory nil)
+  (defvar-local phpunit-root-directory nil
+    "Directory path to execute PHPUnit.")
   (put 'phpunit-root-directory 'safe-local-variable #'stringp)
-  (defvar-local phpunit-executable nil)
-  (put 'phpunit-executable 'safe-local-variable #'stringp))
+  (defvar-local phpunit-args nil
+    "Argument to pass to phpunit command.")
+  (put 'phpunit-args 'safe-local-variable #'(lambda (v) (or (stringp v) (listp v))))
+  (defvar-local phpunit-executable nil
+    "PHPUnit command or path to executable file.")
+  (put 'phpunit-executable 'safe-local-variable
+       #'(lambda (v) (or (null v) (stringp v) (functionp v)))))
 
 (when phpunit-hide-compilation-buffer-if-all-tests-pass
   (add-hook 'compilation-finish-functions 'phpunit--hide-compilation-buffer-if-all-tests-pass))
@@ -152,14 +158,14 @@
 
 (defun phpunit--find-executable (directory)
   "Get PHPUnit executable command in `DIRECTORY'."
-  (cond (phpunit-executable phpunit-executable)
-        ((stringp phpunit-program) phpunit-program)
-        ((functionp phpunit-program) (funcall phpunit-program))
-        ((and directory
-              (file-exists-p (concat directory "vendor/bin/phpunit")))
-         (concat directory "vendor/bin/phpunit"))
-        ((executable-find "phpunit") "phpunit")
-        (t (error "PHPUnit command/package is not installed"))))
+  (let ((executable (or phpunit-executable phpunit-default-program)))
+    (cond ((stringp executable) executable)
+          ((functionp executable) (funcall executable))
+          ((and directory
+                (file-exists-p (concat directory "vendor/bin/phpunit")))
+           (concat directory "vendor/bin/phpunit"))
+          ((executable-find "phpunit") "phpunit")
+          (t (error "PHPUnit command/package is not installed")))))
 
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
@@ -170,9 +176,9 @@
       (setq executable
             (tramp-file-name-localname (tramp-dissect-file-name executable))))
     (s-concat executable
-              (when phpunit-arg
-                (s-concat " " (if (stringp phpunit-arg) phpunit-arg
-                                (s-join " " (mapcar 'shell-quote-argument phpunit-arg)))))
+              (when phpunit-args
+                (s-concat " " (if (stringp phpunit-args) phpunit-args
+                                (s-join " " (mapcar 'shell-quote-argument phpunit-args)))))
               (if phpunit-configuration-file
                   (s-concat " -c " (shell-quote-argument (expand-file-name phpunit-configuration-file)))
                 "")
