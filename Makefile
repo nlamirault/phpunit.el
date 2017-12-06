@@ -77,7 +77,7 @@ virtual-clean:
 .PHONY: clean
 clean :
 	@echo -e "$(OK_COLOR)[$(APP)] Cleanup$(NO_COLOR)"
-	@rm -fr $(OBJECTS) elpa $(APP)-pkg.el $(APP)-pkg.elc $(ARCHIVE).gz
+	@rm -fr $(OBJECTS) elpa vendor $(APP)-pkg.el $(APP)-pkg.elc $(ARCHIVE).gz
 
 reset : clean
 	@rm -rf .cask
@@ -95,7 +95,7 @@ package: clean pkg-el
 	rm -fr dist
 
 vendor/bin/phpunit:
-	php -r 'is_dir("vendor/bin") or mkdir("vendor/bin", 0777, true); touch("vendor/bin/phpunit");'
+	(test -d "vendor/bin" || mkdir -p "vendor/bin") && touch "vendor/bin/phpunit"
 
 %.elc : %.el
 	@$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
