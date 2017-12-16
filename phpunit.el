@@ -323,7 +323,7 @@ The STATUS describes how the compilation process finished."
 
 ;;;###autoload
 (defun phpunit-set-dir-local-variable (variable)
-  "Create project file `.dir-locals.el' and set variable for `phpunit.el'."
+  "Create project file `.dir-locals.el' and set `VARIABLE' for `phpunit.el'."
   (interactive
    (list (intern (completing-read "Select variable name: "
                                   '(phpunit-executable phpunit-directory)))))
