@@ -175,7 +175,7 @@
     (when (file-remote-p default-directory)
       (setq executable
             (tramp-file-name-localname (tramp-dissect-file-name executable))))
-    (s-concat executable
+    (s-concat (shell-quote-argument executable)
               (when phpunit-args
                 (s-concat " " (if (stringp phpunit-args) phpunit-args
                                 (s-join " " (mapcar 'shell-quote-argument phpunit-args)))))
