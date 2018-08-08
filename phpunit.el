@@ -4,10 +4,10 @@
 ;;         Eric Hansen <hansen.c.eric@gmail.com>
 ;;
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.16.0
+;; Version: 0.17.0
 ;; Keywords: tools, php, tests, phpunit
 
-;; Package-Requires: ((s "1.9.0") (f "0.16.0") (pkg-info "0.5") (cl-lib "0.5") (emacs "24.3"))
+;; Package-Requires: ((s "1.12.0") (f "0.19.0") (pkg-info "0.6") (cl-lib "0.5") (emacs "24.3"))
 
 ;;; License:
 
@@ -42,6 +42,8 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'compile)
+(require 'tramp)
 (require 's)
 (require 'f)
 (eval-when-compile
@@ -54,17 +56,17 @@
   :group 'tools
   :group 'php)
 
-(defcustom phpunit-program nil
-  "PHPUnit binary path."
+(defcustom phpunit-default-program nil
+  "PHPUnit command or path to executable file or a function that returns these string."
   :type '(choice (file     :tag "Path to PHPUnit executable file.")
                  (function :tag "A function return PHPUnit executable file path.")
                  (string   :tag "PHPUnit command name. (require command in PATH)")))
 
-(defcustom phpunit-arg nil
-  "Argument to pass to phpunit."
-  :type '(choice string
-                 (repeat string))
-  :group 'phpunit)
+(defvar phpunit-program)
+(make-obsolete-variable 'phpunit-program 'phpunit-default-program "0.18.0")
+
+(defvar phpunit-arg)
+(make-obsolete-variable 'phpunit-arg 'phpunit-args "0.18.0")
 
 (defcustom phpunit-stop-on-error nil
   "Stop execution upon first error."
@@ -133,6 +135,19 @@
   "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]"
   "Valid syntax for a character in a PHP label.")
 
+;;;###autoload
+(progn
+  (defvar-local phpunit-root-directory nil
+    "Directory path to execute PHPUnit.")
+  (put 'phpunit-root-directory 'safe-local-variable #'stringp)
+  (defvar-local phpunit-args nil
+    "Argument to pass to phpunit command.")
+  (put 'phpunit-args 'safe-local-variable #'(lambda (v) (or (stringp v) (listp v))))
+  (defvar-local phpunit-executable nil
+    "PHPUnit command or path to executable file.")
+  (put 'phpunit-executable 'safe-local-variable
+       #'(lambda (v) (or (null v) (stringp v) (functionp v)))))
+
 (when phpunit-hide-compilation-buffer-if-all-tests-pass
   (add-hook 'compilation-finish-functions 'phpunit--hide-compilation-buffer-if-all-tests-pass))
 
@@ -141,26 +156,29 @@
 ;; Commands
 ;; -----------
 
+(defun phpunit--find-executable (directory)
+  "Get PHPUnit executable command in `DIRECTORY'."
+  (let ((executable (or phpunit-executable phpunit-default-program)))
+    (cond ((stringp executable) executable)
+          ((functionp executable) (funcall executable))
+          ((and directory
+                (file-exists-p (concat directory "vendor/bin/phpunit")))
+           (concat directory "vendor/bin/phpunit"))
+          ((executable-find "phpunit") "phpunit")
+          (t (error "PHPUnit command/package is not installed")))))
+
 (defun phpunit-get-program (args)
   "Return the command to launch unit test.
 `ARGS' corresponds to phpunit command line arguments."
-  (let ((phpunit-executable nil)
-        (filename (or (buffer-file-name) ""))
-        (vendor-dir (locate-dominating-file "" "vendor")))
-    (setq phpunit-executable
-          (cond ((stringp phpunit-program) phpunit-program)
-                ((functionp phpunit-program) (funcall phpunit-program))
-                ((and vendor-dir (file-exists-p (concat vendor-dir "vendor/bin/phpunit")))
-                 (concat vendor-dir "vendor/bin/phpunit"))))
-    (unless phpunit-executable
-      (setq phpunit-executable "phpunit"))
-    (when (file-remote-p phpunit-executable)
-      (setq phpunit-executable
-            (tramp-file-name-localname (tramp-dissect-file-name phpunit-executable))))
-    (s-concat phpunit-executable
-              (when phpunit-arg
-                (s-concat " " (if (stringp phpunit-arg) phpunit-arg
-                                (s-join " " (mapcar 'shell-quote-argument phpunit-arg)))))
+  (let* ((vendor-dir (locate-dominating-file default-directory "vendor"))
+         (executable (phpunit--find-executable vendor-dir)))
+    (when (file-remote-p default-directory)
+      (setq executable
+            (tramp-file-name-localname (tramp-dissect-file-name executable))))
+    (s-concat (shell-quote-argument executable)
+              (when phpunit-args
+                (s-concat " " (if (stringp phpunit-args) phpunit-args
+                                (s-join " " (mapcar 'shell-quote-argument phpunit-args)))))
               (if phpunit-configuration-file
                   (s-concat " -c " (shell-quote-argument (expand-file-name phpunit-configuration-file)))
                 "")
@@ -172,23 +190,22 @@
               " "
               args)))
 
-(defun phpunit-get-root-directory ()
+(defun phpunit-get-root-directory (&optional force-real-path)
   "Return the root directory to run tests."
   ;; The function doesn't detect the root directory when used with
   ;; tramp mode. In that case, the phpunit-root-directory variable can
   ;; be set which takes precedence
-  (if (boundp 'phpunit-root-directory)
-      phpunit-root-directory
-    (let ((filename (buffer-file-name)) path)
-      (cond
-       ((null filename) default-directory)
-       (phpunit-configuration-file
-        (file-truename (locate-dominating-file filename phpunit-configuration-file)))
-       (:else
-        (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" ".git" "composer.json")
-                 do (setq path (locate-dominating-file filename file))
-                 if path return (file-truename path)
-                 finally return (file-truename "./")))))))
+  (or (and (not force-real-path) phpunit-root-directory)
+      (let ((filename (buffer-file-name)) path)
+        (cond
+         ((null filename) default-directory)
+         (phpunit-configuration-file
+          (file-truename (locate-dominating-file filename phpunit-configuration-file)))
+         (:else
+          (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" ".git" "composer.json")
+                   do (setq path (locate-dominating-file filename file))
+                   if path return (file-truename path)
+                   finally return (file-truename "./")))))))
 
 (defun phpunit-get-current-class ()
   "Return the canonical unit test class name associated with the current class or buffer."
@@ -212,7 +229,7 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
       (goto-char (point-min))
       (search-forward "Available test group")
       (move-beginning-of-line 1)
-      (next-line)
+      (forward-line)
       (cl-loop
        for line in (s-split "\n" (buffer-substring-no-properties (point) (point-max)))
        if (s-starts-with? " - " line)
@@ -305,6 +322,18 @@ The STATUS describes how the compilation process finished."
 ;; ----
 
 ;;;###autoload
+(defun phpunit-set-dir-local-variable (variable)
+  "Create project file `.dir-locals.el' and set `VARIABLE' for `phpunit.el'."
+  (interactive
+   (list (intern (completing-read "Select variable name: "
+                                  '(phpunit-executable phpunit-directory)))))
+  (add-dir-local-variable nil variable
+                          (read-string
+                           (cl-case variable
+                             ('phpunit-executable "Input a command to run PHPUnit: ")
+                             ('phpunit-root-directory "Input a directory path to execute PHPUnit: ")))))
+
+;;;###autoload
 (defun phpunit-current-test ()
   "Launch PHPUnit on curent test."
   (interactive)
@@ -321,7 +350,7 @@ The STATUS describes how the compilation process finished."
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (phpunit-run (s-chop-prefix (phpunit-get-root-directory) buffer-file-name)))
+  (phpunit-run (s-chop-prefix (phpunit-get-root-directory t) buffer-file-name)))
 
 ;;;###autoload
 (defun phpunit-current-project ()

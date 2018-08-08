@@ -1,5 +1,13 @@
 # phpunit.el ChangeLog
 
+## Version 0.17.0 (09/08/2018)
+
+- [#54](https://github.com/nlamirault/phpunit.el/pull/54): Fix warnings
+- [#55](https://github.com/nlamirault/phpunit.el/pull/55): Integrate .dir-locals.el
+- [#56](https://github.com/nlamirault/phpunit.el/pull/56): Fix `Makefile` for test
+- [#57](https://github.com/nlamirault/phpunit.el/pull/57): Rename variable names
+- [#58](https://github.com/nlamirault/phpunit.el/pull/58): Fix for spaces in project path (thanks @jflearn)
+
 ## Version 0.16.0 (27/11/2017)
 
 - [#52](https://github.com/nlamirault/phpunit.el/pull/52): windows system prohibits the use of stty (tszg)

@@ -61,7 +61,7 @@ elpa:
 build : elpa $(OBJECTS)
 
 .PHONY: test
-test: build
+test: build vendor/bin/phpunit
 	@echo -e "$(OK_COLOR)[$(APP)] Unit tests$(NO_COLOR)"
 	@$(CASK) exec ert-runner
 
@@ -77,7 +77,7 @@ virtual-clean:
 .PHONY: clean
 clean :
 	@echo -e "$(OK_COLOR)[$(APP)] Cleanup$(NO_COLOR)"
-	@rm -fr $(OBJECTS) elpa $(APP)-pkg.el $(APP)-pkg.elc $(ARCHIVE).gz
+	@rm -fr $(OBJECTS) elpa vendor $(APP)-pkg.el $(APP)-pkg.elc $(ARCHIVE).gz
 
 reset : clean
 	@rm -rf .cask
@@ -93,6 +93,9 @@ package: clean pkg-el
 	cp dist/$(ARCHIVE) .
 	gzip $(ARCHIVE)
 	rm -fr dist
+
+vendor/bin/phpunit:
+	(test -d "vendor/bin" || mkdir -p "vendor/bin") && touch "vendor/bin/phpunit"
 
 %.elc : %.el
 	@$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch \
