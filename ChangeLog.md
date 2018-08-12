@@ -1,5 +1,9 @@
 # phpunit.el ChangeLog
 
+## Version 0.17.1 (12/08/2018)
+
+- [#60](https://github.com/nlamirault/phpunit.el/pull/60): Hotfix: Path to `phpunit` could not be expanded
+
 ## Version 0.17.0 (09/08/2018)
 
 - [#54](https://github.com/nlamirault/phpunit.el/pull/54): Fix warnings
