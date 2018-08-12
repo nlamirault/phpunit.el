@@ -163,7 +163,7 @@
           ((functionp executable) (funcall executable))
           ((and directory
                 (file-exists-p (concat directory "vendor/bin/phpunit")))
-           (concat directory "vendor/bin/phpunit"))
+           (expand-file-name (concat directory "vendor/bin/phpunit")))
           ((executable-find "phpunit") "phpunit")
           (t (error "PHPUnit command/package is not installed")))))
 
