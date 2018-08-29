@@ -4,7 +4,7 @@
 ;;         Eric Hansen <hansen.c.eric@gmail.com>
 ;;
 ;; URL: https://github.com/nlamirault/phpunit.el
-;; Version: 0.17.2
+;; Version: 0.17.1
 ;; Keywords: tools, php, tests, phpunit
 
 ;; Package-Requires: ((s "1.12.0") (f "0.19.0") (pkg-info "0.6") (cl-lib "0.5") (emacs "24.3"))
@@ -61,10 +61,6 @@
   :type '(choice (file     :tag "Path to PHPUnit executable file.")
                  (function :tag "A function return PHPUnit executable file path.")
                  (string   :tag "PHPUnit command name. (require command in PATH)")))
-
-(defcustom phpunit-args nil
-  "Argument to pass to phpunit command."
-  :type 'string)
 
 (defvar phpunit-program)
 (make-obsolete-variable 'phpunit-program 'phpunit-default-program "0.18.0")
@@ -144,6 +140,9 @@
   (defvar-local phpunit-root-directory nil
     "Directory path to execute PHPUnit.")
   (put 'phpunit-root-directory 'safe-local-variable #'stringp)
+  (defvar-local phpunit-args nil
+    "Argument to pass to phpunit command.")
+  (put 'phpunit-args 'safe-local-variable #'(lambda (v) (or (stringp v) (listp v))))
   (defvar-local phpunit-executable nil
     "PHPUnit command or path to executable file.")
   (put 'phpunit-executable 'safe-local-variable
