@@ -51,7 +51,13 @@ The following configuration variables are available:
 ```lisp
 (setq phpunit-configuration-file "phpunit.xml")
 (setq phpunit-root-directory "./")
+(setq phpunit-default-program "php")
+(setq phpunit-args "vendor/phpunit/phpunit/phpunit")
 ```
+
+*Windows*
+
+If you using windows system, the `vendor/bin/phpunit` is not correct script for you and your window system. You can set `phpunit-default-program` and `phpunit-args` satisfy the command line composition.
 
 ## Development
 
