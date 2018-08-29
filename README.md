@@ -57,7 +57,7 @@ The following configuration variables are available:
 
 *Windows*
 
-If you using windows system, the `vendor/bin/phpunit` is not correct script for you and your window system. You can set `phpunit-default-program` and `phpunit-args` satisfy the command line composition.
+If you using windows system, the `vendor/bin/phpunit` is not correct script for you and your Windows system. You can set `phpunit-default-program` and `phpunit-args` satisfy the command line composition.
 
 ## Development
 
