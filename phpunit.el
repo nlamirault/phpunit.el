@@ -296,6 +296,11 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
         (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
 
+;; This function will be overwritten each time a test is run.
+(defun phpunit--run-last ()
+  "Rerun the last phpunit command."
+  (error "Nothing to rerun: try again after running a test"))
+
 (defun phpunit--hide-compilation-buffer-if-all-tests-pass (buffer status)
   "Hide the compilation BUFFER if all tests pass.
 The STATUS describes how the compilation process finished."
@@ -337,26 +342,31 @@ The STATUS describes how the compilation process finished."
 (defun phpunit-current-test ()
   "Launch PHPUnit on curent test."
   (interactive)
-  (let ((args (s-concat " --filter '"
-			(phpunit-get-current-class)
-			"::"
-			(phpunit-get-current-test) "'"
-                        " "
-                        (s-chop-prefix (phpunit-get-root-directory) buffer-file-name))))
-    (phpunit-run args)))
-
+  (let* ((args (s-concat " --filter '"
+                         (phpunit-get-current-class)
+                         "::"
+                         (phpunit-get-current-test) "'"
+                         " "
+                         (s-chop-prefix (phpunit-get-root-directory) buffer-file-name)))
+         (cmd (apply-partially #'phpunit-run args)))
+    (fset #'phpunit--run-last cmd)
+    (funcall cmd)))
 
 ;;;###autoload
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (phpunit-run (s-chop-prefix (phpunit-get-root-directory t) buffer-file-name)))
+  (let ((cmd (apply-partially #'phpunit-run (s-chop-prefix (phpunit-get-root-directory t) buffer-file-name))))
+    (fset #'phpunit--run-last cmd)
+    (funcall cmd)))
 
 ;;;###autoload
 (defun phpunit-current-project ()
   "Launch PHPUnit on current project."
   (interactive)
-  (phpunit-run ""))
+  (let ((cmd (apply-partially #'phpunit-run "")))
+    (fset #'phpunit--run-last cmd)
+    (funcall cmd)))
 
 ;;;###autoload
 (defun phpunit-group (use-last-group &optional group)
@@ -371,6 +381,12 @@ The STATUS describes how the compilation process finished."
                     (completing-read "PHPUnit @group: " (phpunit--listing-groups)))))
     (phpunit-run (format "--group %s" group))
     (phpunit--put-last-group group current-root-directory)))
+
+;;;###autoload
+(defun phpunit-rerun ()
+  "Rerun the last PHPUnit test."
+  (interactive)
+  (phpunit--run-last))
 
 (provide 'phpunit)
 ;;; phpunit.el ends here

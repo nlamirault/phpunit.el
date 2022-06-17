@@ -26,6 +26,7 @@ These functions are available :
 * `phpunit-current-test`: launch unit tests for the current test in a class
 * `phpunit-current-class`: launch unit tests for the current class
 * `phpunit-current-project`: launch all unit tests
+* `phpunit-rerun`: re-launch the most recently launched unit tests 
 * `phpunit-group`: launch PHPUnit for group
 
 You can create some key bindings with these commands:
@@ -34,6 +35,7 @@ You can create some key bindings with these commands:
 (define-key web-mode-map (kbd "C-t t") 'phpunit-current-test)
 (define-key web-mode-map (kbd "C-t c") 'phpunit-current-class)
 (define-key web-mode-map (kbd "C-t p") 'phpunit-current-project)
+(define-key web-mode-map (kbd "C-t r") 'phpunit-rerun)
 ```
 
 or use the minor mode :

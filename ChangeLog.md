@@ -1,5 +1,10 @@
 # phpunit.el ChangeLog
 
+## Unreleased
+
+- fix: Improve handling of `hide-compilation-buffer`
+- feat: Rerun the most recently run test
+
 ## Version 0.17.1 (12/08/2018)
 
 - [#60](https://github.com/nlamirault/phpunit.el/pull/60): Hotfix: Path to `phpunit` could not be expanded

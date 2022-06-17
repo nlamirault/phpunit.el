@@ -28,6 +28,7 @@
     (define-key map (kbd "C-t t") 'phpunit-current-test)
     (define-key map (kbd "C-t c") 'phpunit-current-class)
     (define-key map (kbd "C-t p") 'phpunit-current-project)
+    (define-key map (kbd "C-t r") 'phpunit-rerun)
     map)
   "Keymap for PHPUnit minor mode.")
 
