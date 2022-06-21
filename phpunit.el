@@ -289,10 +289,12 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
   (let ((default-directory (phpunit-get-root-directory)))
     (shell-command-to-string (phpunit-get-program (phpunit-arguments args)))))
 
-(defun phpunit-run (args)
-  "Execute phpunit command with `ARGS'."
+(defun phpunit-run (args &optional dir)
+  "Execute phpunit command with `ARGS' in `DIR'.
+
+If `DIR' is not provided, it will be inferred with phpunit-get-root-directory."
   (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))
-  (let ((default-directory (phpunit-get-root-directory))
+  (let ((default-directory (or dir (phpunit-get-root-directory)))
         (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
 
@@ -348,7 +350,7 @@ The STATUS describes how the compilation process finished."
                          (phpunit-get-current-test) "'"
                          " "
                          (s-chop-prefix (phpunit-get-root-directory) buffer-file-name)))
-         (cmd (apply-partially #'phpunit-run args)))
+         (cmd (apply-partially #'phpunit-run args (phpunit-get-root-directory))))
     (fset #'phpunit--run-last cmd)
     (funcall cmd)))
 
@@ -356,7 +358,7 @@ The STATUS describes how the compilation process finished."
 (defun phpunit-current-class ()
   "Launch PHPUnit on current class."
   (interactive)
-  (let ((cmd (apply-partially #'phpunit-run (s-chop-prefix (phpunit-get-root-directory t) buffer-file-name))))
+  (let ((cmd (apply-partially #'phpunit-run (s-chop-prefix (phpunit-get-root-directory t) buffer-file-name) (phpunit-get-root-directory))))
     (fset #'phpunit--run-last cmd)
     (funcall cmd)))
 
@@ -364,7 +366,7 @@ The STATUS describes how the compilation process finished."
 (defun phpunit-current-project ()
   "Launch PHPUnit on current project."
   (interactive)
-  (let ((cmd (apply-partially #'phpunit-run "")))
+  (let ((cmd (apply-partially #'phpunit-run "" (phpunit-get-root-directory))))
     (fset #'phpunit--run-last cmd)
     (funcall cmd)))
 
