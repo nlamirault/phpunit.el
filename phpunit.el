@@ -292,6 +292,8 @@ https://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.anno
 (defun phpunit-run (args)
   "Execute phpunit command with `ARGS'."
   (add-to-list 'compilation-error-regexp-alist '("^\\(.+\\.php\\):\\([0-9]+\\)$" 1 2))
+  ;; format: #0 /path/to/file(line): class::method(param)
+  (add-to-list 'compilation-error-regexp-alist '("^#[0-9]+ \\(.+\\.php\\)(\\([0-9]+\\)):" 1 2))
   (let ((default-directory (phpunit-get-root-directory))
         (compilation-process-setup-function #'phpunit--setup-compilation-buffer))
     (compile (phpunit-get-compile-command args))))
