@@ -202,7 +202,7 @@
          (phpunit-configuration-file
           (file-truename (locate-dominating-file filename phpunit-configuration-file)))
          (:else
-          (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" ".git" "composer.json")
+          (cl-loop for file in '("phpunit.xml" "phpunit.xml.dist" "composer.json" ".git")
                    do (setq path (locate-dominating-file filename file))
                    if path return (file-truename path)
                    finally return (file-truename "./")))))))
