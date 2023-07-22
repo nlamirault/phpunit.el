@@ -58,7 +58,8 @@
 
 (defcustom phpunit-default-program nil
   "PHPUnit command or path to executable file or a function that returns these string."
-  :type '(choice (file     :tag "Path to PHPUnit executable file.")
+  :type '(choice (const    :tag "Not set." nil)
+                 (file     :tag "Path to PHPUnit executable file.")
                  (function :tag "A function return PHPUnit executable file path.")
                  (string   :tag "PHPUnit command name. (require command in PATH)")))
 
