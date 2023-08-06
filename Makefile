@@ -15,7 +15,7 @@
 
 APP = phpunit
 
-EMACS ?= emacs
+export EMACS ?= $(shell which emacs)
 EMACSFLAGS = -L .
 CASK = cask
 VAGRANT = vagrant
@@ -63,7 +63,8 @@ build : elpa $(OBJECTS)
 .PHONY: test
 test: build vendor/bin/phpunit
 	@echo -e "$(OK_COLOR)[$(APP)] Unit tests$(NO_COLOR)"
-	@$(CASK) exec ert-runner
+	@$(CASK) emacs --batch -L . -L test -l phpunit-test -l test-helper \
+		-l phpunit-version-test -f ert-run-tests-batch
 
 .PHONY: virtual-test
 virtual-test: check-env

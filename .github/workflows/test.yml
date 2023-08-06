@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+    - 'etc/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    strategy:
+      matrix:
+        emacs_version:
+          - "26.1"
+          - "26.3"
+          - "27.1"
+          - "27.2"
+          - "28.1"
+          - "28.2"
+          - "29.1"
+          - release-snapshot
+          - snapshot
+        include:
+          - emacs_version: snapshot
+            allow_failure: true
+    steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        architecture: 'x64'
+    - uses: purcell/setup-emacs@master
+      with:
+        version: ${{ matrix.emacs_version }}
+    - uses: actions/cache@v3
+      id: cache-cask-packages
+      with:
+        path: .cask
+        key: cache-cask-packages-000
+    - uses: actions/cache@v3
+      id: cache-cask-executable
+      with:
+        path: ~/.cask
+        key: cache-cask-executable-000
+    - uses: cask/setup-cask@master
+      if: steps.cache-cask-executable.outputs.cache-hit != 'true'
+      with:
+        version: snapshot
+    - run: echo "$HOME/.cask/bin" >> $GITHUB_PATH
+    - uses: actions/checkout@v3
+    - name: Run tests
+      if: matrix.allow_failure != true
+      run: 'make test'
+      env:
+        COVERALLS_FLAG_NAME: Emacs ${{ matrix.emacs_version }}
+        COVERALLS_PARALLEL: 1
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Run tests (allow failure)
+      if: matrix.allow_failure == true
+      run: 'make test || true'
+      env:
+        COVERALLS_FLAG_NAME: Emacs ${{ matrix.emacs_version }}
+        COVERALLS_PARALLEL: 1
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
