@@ -74,7 +74,7 @@ class PhpUnitTest extends \\PHPUnit_Framework_TestCase {
                 (goto-char (point-min))
                 (phpunit-get-current-class)))))
 
-(ert-deftest test-phpunit-get-class()
+(ert-deftest test-phpunit-get-current-test()
   :tags '(tools)
   (should (string= "test"
                    (with-temp-buffer

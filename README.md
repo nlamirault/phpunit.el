@@ -2,8 +2,7 @@
 
 [![License GPL 3][badge-license]][LICENSE]
 
-* Master [![MELPA Stable](https://stable.melpa.org/packages/phpunit-badge.svg)](https://stable.melpa.org/#/phpunit) [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/master.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/master) [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.svg)](https://coveralls.io/r/nlamirault/phpunit.el)
-* Develop : [![Melpa Status](https://melpa.org/packages/phpunit-badge.svg)](https://melpa.org/#/phpunit) [![Circle CI](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop.svg?style=svg)](https://circleci.com/gh/nlamirault/phpunit.el/tree/develop) [![Coverage Status](https://coveralls.io/repos/github/nlamirault/phpunit.el/badge.svg?branch=develop)](https://coveralls.io/github/nlamirault/phpunit.el?branch=develop)
+* Master ![automated tests](https://github.com/nlamirault/phpunit.el/actions/workflows/test.yml/badge.svg) [![Coverage Status](https://coveralls.io/repos/nlamirault/phpunit.el/badge.svg)](https://coveralls.io/r/nlamirault/phpunit.el)
 
 Manage the [PHPUnit][] tests from Emacs (>= 24.3)
 
