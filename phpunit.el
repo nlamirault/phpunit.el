@@ -338,7 +338,7 @@ The STATUS describes how the compilation process finished."
 
 ;;;###autoload
 (defun phpunit-current-test ()
-  "Launch PHPUnit on curent test."
+  "Launch PHPUnit on current test."
   (interactive)
   (let ((args (s-concat " --filter '"
 			(phpunit-get-current-class)
